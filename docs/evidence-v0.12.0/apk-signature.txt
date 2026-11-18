@@ -1,0 +1,19 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=AI Photography Director, OU=Independent Android Development
+Signer #1 certificate SHA-256 digest: 2b2226c8fdedea8887a5d6db129a366ebfdb8768aa123a8671f259cd24cf9f66
+Signer #1 certificate SHA-1 digest: ad0b5696edf6f72ae8ba740e444d30df2f2b3571
+Signer #1 certificate MD5 digest: c28c5275c6415df41e9d91e956cf3cd7
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 3072
+Signer #1 public key SHA-256 digest: faea2eae2c38b9c050f6381a6d6b3dc5de1e16e3a52cbbf115b4837ba3ada670
+Signer #1 public key SHA-1 digest: 984ae0e70f8e32663142ff481cd3513ec192d2cf
+Signer #1 public key MD5 digest: 05020d3f1c774e45bc03bdb6a69f7df6
+
+Exit code: 0

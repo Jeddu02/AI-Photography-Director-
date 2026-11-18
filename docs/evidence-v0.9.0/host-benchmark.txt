@@ -1,0 +1,2 @@
+150 crop rankings after 30 warm-ups, 64×64 synthetic converging edges
+median 0.81 ms, p95 1.66 ms

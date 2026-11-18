@@ -1,0 +1,856 @@
+{
+    "$schema" : "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+    "version" : "2.1.0",
+    "runs" : [
+        {
+            "tool": {
+                "driver": {
+                    "name": "Android Lint",
+                    "fullName": "Android Lint (in gradle)",
+                    "version": "9.3.1",
+                    "semanticVersion": "9.3.1",
+                    "organization": "Google",
+                    "informationUri": "https://developer.android.com/studio/write/lint",
+                    "fullDescription": {
+                        "text": "Static analysis originally for Android source code but now performing general analysis"
+                    },
+                    "language": "en-US",
+                    "rules": [
+                        {
+                            "id": "GradleDependency",
+                            "shortDescription": {
+                                "text": "Obsolete Gradle Dependency"
+                            },
+                            "fullDescription": {
+                                "text": "This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 70
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Correctness"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "MonochromeLauncherIcon",
+                            "shortDescription": {
+                                "text": "Monochrome icon is not defined"
+                            },
+                            "fullDescription": {
+                                "text": "The system may use the coloring of the user's chosen wallpaper and theme to tint app icons. Providing a <monochrome> layer (which will be used for tinting) for every adaptive icon is strongly recommended, otherwise Android 16 QPR 2 and above will simply tint the color version of the icon, which may look unusual. Devices running earlier Android versions will (with no monochrome layer) show the untinted color icon for your app, which will look inconsistent.",
+                                "markdown": "The system may use the coloring of the user's chosen wallpaper and theme to tint app icons. Providing a `<monochrome>` layer (which will be used for tinting) for every adaptive icon is strongly recommended, otherwise Android 16 QPR 2 and above will simply tint the color version of the icon, which may look unusual. Devices running earlier Android versions will (with no monochrome layer) show the untinted color icon for your app, which will look inconsistent."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 50
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Icons",
+                                    "Usability"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "OldTargetApi",
+                            "shortDescription": {
+                                "text": "Target SDK attribute is not targeting latest version"
+                            },
+                            "fullDescription": {
+                                "text": "When your application or sdk runs on a version of Android that is more recent than your targetSdk specifies that it has been tested with, various compatibility modes kick in. This ensures that your application continues to work, but it may look out of place. For example, if the targetSdk is less than 14, your app may get an option button in the UI.\n\nTo fix this issue, set the targetSdk to the highest available value. Then test your app to make sure everything works correctly. You may want to consult the compatibility notes to see what changes apply to each version you are adding support for: https://developer.android.com/reference/android/os/Build.VERSION_CODES.html as well as follow this guide:\nhttps://developer.android.com/distribute/best-practices/develop/target-sdk.html",
+                                "markdown": "When your application or sdk runs on a version of Android that is more recent than your `targetSdk` specifies that it has been tested with, various compatibility modes kick in. This ensures that your application continues to work, but it may look out of place. For example, if the `targetSdk` is less than 14, your app may get an option button in the UI.\n\nTo fix this issue, set the `targetSdk` to the highest available value. Then test your app to make sure everything works correctly. You may want to consult the compatibility notes to see what changes apply to each version you are adding support for: https://developer.android.com/reference/android/os/Build.VERSION_CODES.html as well as follow this guide:\nhttps://developer.android.com/distribute/best-practices/develop/target-sdk.html"
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 50
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Correctness"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "UseKtx",
+                            "shortDescription": {
+                                "text": "Use KTX extension function"
+                            },
+                            "fullDescription": {
+                                "text": "The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 50
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Productivity"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "originalUriBaseIds": {
+                "%SRCROOT%": {
+                    "uri": "file:///workspace/scratch/0c07d131573a/ai_photography_director/android/"
+                }
+            },
+            "results": [
+                {
+                    "ruleId": "OldTargetApi",
+                    "ruleIndex": 2,
+                    "message": {
+                        "text": "Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details.",
+                        "markdown": "Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/build.gradle.kts"
+                                },
+                                "region": {
+                                    "startLine": 11,
+                                    "startColumn": 80,
+                                    "endLine": 11,
+                                    "endColumn": 92,
+                                    "charOffset": 440,
+                                    "charLength": 12,
+                                    "snippet": {
+                                        "text": "targetSdk=35"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 9,
+                                    "endLine": 14,
+                                    "snippet": {
+                                        "text": "    compileSdk=35\n    compileOptions { sourceCompatibility=JavaVersion.VERSION_17;targetCompatibility=JavaVersion.VERSION_17 }\n    defaultConfig { applicationId=\"com.jade.ai_photography_director\";minSdk=26;targetSdk=35;versionCode=flutter.versionCode;versionName=flutter.versionName }\n    signingConfigs {\n        create(\"privateRelease\") {\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Update targetSdkVersion to 37"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/build.gradle.kts"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 11,
+                                                "startColumn": 90,
+                                                "charOffset": 450,
+                                                "endLine": 11,
+                                                "endColumn": 92,
+                                                "charLength": 2
+                                            },
+                                            "insertedContent": {
+                                                "text": "37\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "e6639565ca21d871"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 0,
+                    "message": {
+                        "text": "A newer version of compileSdk than 35 is available: 37",
+                        "markdown": "A newer version of `compileSdk` than 35 is available: 37"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/build.gradle.kts"
+                                },
+                                "region": {
+                                    "startLine": 9,
+                                    "startColumn": 5,
+                                    "endLine": 9,
+                                    "endColumn": 18,
+                                    "charOffset": 238,
+                                    "charLength": 13,
+                                    "snippet": {
+                                        "text": "compileSdk=35"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 7,
+                                    "endLine": 12,
+                                    "snippet": {
+                                        "text": "android {\n    namespace=\"com.jade.ai_photography_director\"\n    compileSdk=35\n    compileOptions { sourceCompatibility=JavaVersion.VERSION_17;targetCompatibility=JavaVersion.VERSION_17 }\n    defaultConfig { applicationId=\"com.jade.ai_photography_director\";minSdk=26;targetSdk=35;versionCode=flutter.versionCode;versionName=flutter.versionName }\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Set compileSdk to 37"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/build.gradle.kts"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 9,
+                                                "startColumn": 16,
+                                                "charOffset": 249,
+                                                "endLine": 9,
+                                                "endColumn": 18,
+                                                "charLength": 2
+                                            },
+                                            "insertedContent": {
+                                                "text": "37\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "7a2b34cc0ebb446b"
+                    }
+                },
+                {
+                    "ruleId": "MonochromeLauncherIcon",
+                    "ruleIndex": 1,
+                    "message": {
+                        "text": "The application adaptive icon is missing a monochrome tag"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/mipmap-anydpi/ic_launcher.xml"
+                                },
+                                "region": {
+                                    "startLine": 1,
+                                    "startColumn": 1,
+                                    "endLine": 1,
+                                    "endColumn": 204,
+                                    "charOffset": 0,
+                                    "charLength": 203,
+                                    "snippet": {
+                                        "text": "<adaptive-icon xmlns:android=\"http://schemas.android.com/apk/res/android\"><background android:drawable=\"@color/icon_background\"/><foreground android:drawable=\"@drawable/icon_foreground\"/></adaptive-icon>"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 1,
+                                    "endLine": 2,
+                                    "snippet": {
+                                        "text": "<adaptive-icon xmlns:android=\"http://schemas.android.com/apk/res/android\"><background android:drawable=\"@color/icon_background\"/><foreground android:drawable=\"@drawable/icon_foreground\"/></adaptive-icon>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "64e0255ef4c7819b"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "Use the KTX function createBitmap instead?",
+                        "markdown": "Use the KTX function `createBitmap` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/kotlin/com/jade/ai_photography_director/DirectorService.kt"
+                                },
+                                "region": {
+                                    "startLine": 332,
+                                    "startColumn": 24,
+                                    "endLine": 332,
+                                    "endColumn": 95,
+                                    "charOffset": 12314,
+                                    "charLength": 71,
+                                    "snippet": {
+                                        "text": "Bitmap.createBitmap(paddedWidth, image.height, Bitmap.Config.ARGB_8888)"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 330,
+                                    "endLine": 335,
+                                    "snippet": {
+                                        "text": "                image.width +\n                    (plane.rowStride - plane.pixelStride * image.width) / plane.pixelStride\n            val full = Bitmap.createBitmap(paddedWidth, image.height, Bitmap.Config.ARGB_8888)\n            allocated = full\n            full.copyPixelsFromBuffer(plane.buffer)\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the createBitmap function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/kotlin/com/jade/ai_photography_director/DirectorService.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 332,
+                                                "startColumn": 24,
+                                                "charOffset": 12314,
+                                                "endLine": 332,
+                                                "endColumn": 95,
+                                                "charLength": 71
+                                            },
+                                            "insertedContent": {
+                                                "text": "createBitmap(paddedWidth, image.height)\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "9c2c82c3ab9fcf9e"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "Use the KTX extension function SharedPreferences.edit instead?",
+                        "markdown": "Use the KTX extension function `SharedPreferences.edit` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/kotlin/com/jade/ai_photography_director/DirectorSettings.kt"
+                                },
+                                "region": {
+                                    "startLine": 42,
+                                    "startColumn": 9,
+                                    "endLine": 43,
+                                    "endColumn": 20,
+                                    "charOffset": 1167,
+                                    "charLength": 57,
+                                    "snippet": {
+                                        "text": "c.getSharedPreferences(\"director\", 0)\n            .edit()"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 40,
+                                    "endLine": 46,
+                                    "snippet": {
+                                        "text": "\n    fun save(c: Context) {\n        c.getSharedPreferences(\"director\", 0)\n            .edit()\n            .putString(\"settings\", JSONObject(map()).toString())\n            .apply()\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the edit extension function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/kotlin/com/jade/ai_photography_director/DirectorSettings.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 43,
+                                                "startColumn": 14,
+                                                "charOffset": 1218,
+                                                "endLine": 43,
+                                                "endColumn": 19,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "edit\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 43,
+                                                "startColumn": 19,
+                                                "charOffset": 1223,
+                                                "endLine": 43,
+                                                "endColumn": 20,
+                                                "charLength": 1
+                                            },
+                                            "insertedContent": {
+                                                "text": " {\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 44,
+                                                "startColumn": 13,
+                                                "charOffset": 1237,
+                                                "endLine": 44,
+                                                "endColumn": 14,
+                                                "charLength": 1
+                                            },
+                                            "insertedContent": {
+                                                "text": "\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 45,
+                                                "startColumn": 13,
+                                                "charOffset": 1302,
+                                                "endLine": 45,
+                                                "endColumn": 21,
+                                                "charLength": 8
+                                            },
+                                            "insertedContent": {
+                                                "text": "}\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 44,
+                                                "startColumn": 1,
+                                                "charOffset": 1225
+                                            },
+                                            "insertedContent": {
+                                                "text": "    \n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "83f1a578b8643daf"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "Use the KTX extension function Canvas.withTranslation instead?",
+                        "markdown": "Use the KTX extension function `Canvas.withTranslation` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/kotlin/com/jade/ai_photography_director/GuideView.kt"
+                                },
+                                "region": {
+                                    "startLine": 139,
+                                    "startColumn": 9,
+                                    "endLine": 139,
+                                    "endColumn": 22,
+                                    "charOffset": 5423,
+                                    "charLength": 13,
+                                    "snippet": {
+                                        "text": "canvas.save()"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 137,
+                                    "endLine": 142,
+                                    "snippet": {
+                                        "text": "        paint.color = Color.rgb(19, 21, 23)\n        canvas.drawRoundRect(cardRect, 20f, 20f, paint)\n        canvas.save()\n        canvas.translate(32f, cardTop + 16f)\n        layout.draw(canvas)\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the withTranslation extension function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/kotlin/com/jade/ai_photography_director/GuideView.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 139,
+                                                "startColumn": 16,
+                                                "charOffset": 5430,
+                                                "endLine": 139,
+                                                "endColumn": 21,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "withTranslation(32f, cardTop + 16f\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 139,
+                                                "startColumn": 21,
+                                                "charOffset": 5435,
+                                                "endLine": 139,
+                                                "endColumn": 22,
+                                                "charLength": 1
+                                            },
+                                            "insertedContent": {
+                                                "text": ") {\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 140,
+                                                "startColumn": 1,
+                                                "charOffset": 5437,
+                                                "endLine": 141,
+                                                "endColumn": 46,
+                                                "charLength": 45
+                                            },
+                                            "insertedContent": {
+                                                "text": "\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 141,
+                                                "startColumn": 21,
+                                                "charOffset": 5502,
+                                                "endLine": 141,
+                                                "endColumn": 27,
+                                                "charLength": 6
+                                            },
+                                            "insertedContent": {
+                                                "text": "this\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 142,
+                                                "startColumn": 9,
+                                                "charOffset": 5518,
+                                                "endLine": 142,
+                                                "endColumn": 25,
+                                                "charLength": 16
+                                            },
+                                            "insertedContent": {
+                                                "text": "}\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 141,
+                                                "startColumn": 1,
+                                                "charOffset": 5482
+                                            },
+                                            "insertedContent": {
+                                                "text": "    \n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "73472424a15d90fc"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "Use the KTX extension function SharedPreferences.edit instead?",
+                        "markdown": "Use the KTX extension function `SharedPreferences.edit` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/kotlin/com/jade/ai_photography_director/MainActivity.kt"
+                                },
+                                "region": {
+                                    "startLine": 44,
+                                    "startColumn": 29,
+                                    "endLine": 45,
+                                    "endColumn": 40,
+                                    "charOffset": 2023,
+                                    "charLength": 75,
+                                    "snippet": {
+                                        "text": "getSharedPreferences(\"director\", 0)\n                                .edit()"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 42,
+                                    "endLine": 48,
+                                    "snippet": {
+                                        "text": "                            )\n                        \"completeOnboarding\" -> {\n                            getSharedPreferences(\"director\", 0)\n                                .edit()\n                                .putBoolean(\"onboarded\", true)\n                                .apply()\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the edit extension function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/kotlin/com/jade/ai_photography_director/MainActivity.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 45,
+                                                "startColumn": 34,
+                                                "charOffset": 2092,
+                                                "endLine": 45,
+                                                "endColumn": 39,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "edit\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 45,
+                                                "startColumn": 39,
+                                                "charOffset": 2097,
+                                                "endLine": 45,
+                                                "endColumn": 40,
+                                                "charLength": 1
+                                            },
+                                            "insertedContent": {
+                                                "text": " {\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 46,
+                                                "startColumn": 33,
+                                                "charOffset": 2131,
+                                                "endLine": 46,
+                                                "endColumn": 34,
+                                                "charLength": 1
+                                            },
+                                            "insertedContent": {
+                                                "text": "\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 47,
+                                                "startColumn": 33,
+                                                "charOffset": 2194,
+                                                "endLine": 47,
+                                                "endColumn": 41,
+                                                "charLength": 8
+                                            },
+                                            "insertedContent": {
+                                                "text": "}\n"
+                                            }
+                                        },
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 46,
+                                                "startColumn": 1,
+                                                "charOffset": 2099
+                                            },
+                                            "insertedContent": {
+                                                "text": "    \n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "26ed5c6dde8cc608"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "Use the KTX extension function String.toUri instead?",
+                        "markdown": "Use the KTX extension function `String.toUri` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/kotlin/com/jade/ai_photography_director/MainActivity.kt"
+                                },
+                                "region": {
+                                    "startLine": 61,
+                                    "startColumn": 37,
+                                    "endLine": 61,
+                                    "endColumn": 70,
+                                    "charOffset": 2928,
+                                    "charLength": 33,
+                                    "snippet": {
+                                        "text": "Uri.parse(\"package:$packageName\")"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 59,
+                                    "endLine": 64,
+                                    "snippet": {
+                                        "text": "                                Intent(\n                                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,\n                                    Uri.parse(\"package:$packageName\"),\n                                )\n                            )\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the toUri extension function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/kotlin/com/jade/ai_photography_director/MainActivity.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 61,
+                                                "startColumn": 37,
+                                                "charOffset": 2928,
+                                                "endLine": 61,
+                                                "endColumn": 70,
+                                                "charLength": 33
+                                            },
+                                            "insertedContent": {
+                                                "text": "\"package:$packageName\".toUri()\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "29ef560492d41120"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "Use the KTX extension function Bitmap.scale instead?",
+                        "markdown": "Use the KTX extension function `Bitmap.scale` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/kotlin/com/jade/ai_photography_director/Vision.kt"
+                                },
+                                "region": {
+                                    "startLine": 93,
+                                    "startColumn": 25,
+                                    "endLine": 93,
+                                    "endColumn": 72,
+                                    "charOffset": 3820,
+                                    "charLength": 47,
+                                    "snippet": {
+                                        "text": "Bitmap.createScaledBitmap(bitmap, 64, 64, true)"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 91,
+                                    "endLine": 96,
+                                    "snippet": {
+                                        "text": "                    }\n            }\n            val small = Bitmap.createScaledBitmap(bitmap, 64, 64, true)\n            val pixels = IntArray(4096)\n            small.getPixels(pixels, 0, 64, 0, 0, 64, 64)\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the scale extension function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/kotlin/com/jade/ai_photography_director/Vision.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 93,
+                                                "startColumn": 25,
+                                                "charOffset": 3820,
+                                                "endLine": 93,
+                                                "endColumn": 72,
+                                                "charLength": 47
+                                            },
+                                            "insertedContent": {
+                                                "text": "bitmap.scale(64, 64)\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "2cc95e74dccdb003"
+                    }
+                }
+            ]
+        }
+    ]
+}

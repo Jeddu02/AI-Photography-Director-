@@ -1,0 +1,1 @@
+PASS: version 0.3.0/build 3 uses the same signing certificate as the verified 0.2.0 APK.

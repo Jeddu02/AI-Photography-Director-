@@ -1,0 +1,14 @@
+99 Android JVM tests passed, including the narrow portrait layout and portrait lighting/AI Auto tests.
+com.jade.ai_photography_director.SceneCoachTest 10
+com.jade.ai_photography_director.PhotoRatioTest 4
+com.jade.ai_photography_director.PortraitDirectorTest 5
+com.jade.ai_photography_director.PreviewCalibrationTest 5
+com.jade.ai_photography_director.SceneFramingTest 1
+com.jade.ai_photography_director.SubjectFramingTest 6
+com.jade.ai_photography_director.CameraLayoutTest 1
+com.jade.ai_photography_director.ShotDirectorTest 21
+com.jade.ai_photography_director.CameraLookTest 5
+com.jade.ai_photography_director.RegionSelectionTest 3
+com.jade.ai_photography_director.CompositionTest 17
+com.jade.ai_photography_director.CameraLevelTest 2
+com.jade.ai_photography_director.SubjectSelectionTest 19

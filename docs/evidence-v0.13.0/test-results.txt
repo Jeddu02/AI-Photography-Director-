@@ -1,0 +1,1 @@
+100 Android JVM tests passed, including restoring AI CAM with a saved Manual Composition preference. All seven Flutter tests passed. No physical handset was connected.

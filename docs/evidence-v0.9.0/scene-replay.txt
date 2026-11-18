@@ -1,0 +1,9 @@
+mean=0.28626952, deviation=0.28389817
+ShotProposal(frame=Box(l=0.252, t=0.16800001, r=0.832, b=0.748), score=0.6733619, focus=null, reason=Concentrate visible detail, baseScore=0.6733619)
+ShotProposal(frame=Box(l=0.0, t=0.0, r=1.0, b=1.0), score=0.5605562, focus=null, reason=Keep this wider view, baseScore=0.5605562)
+ShotProposal(frame=Box(l=0.08400001, t=0.16800001, r=0.664, b=0.748), score=0.6662613, focus=null, reason=Concentrate visible detail, baseScore=0.6662613)
+ShotProposal(frame=Box(l=0.16800001, t=0.08400001, r=0.748, b=0.664), score=0.6620168, focus=null, reason=Concentrate visible detail, baseScore=0.6620168)
+ShotProposal(frame=Box(l=0.0, t=0.08400001, r=0.58, b=0.664), score=0.65101284, focus=null, reason=Concentrate visible detail, baseScore=0.65101284)
+Advice(key=search, text=Looking for a promising frame, level=1, dx=0.0, dy=0.0, targetX=0.5, targetY=0.5, score=0.0, frame=Box(l=0.252, t=0.16800001, r=0.832, b=0.748), zoom=1.7241378, focusLabel=null, reason=Concentrate visible detail, scope=scene, confidence=0.65)
+Advice(key=zoom_in, text=Zoom in about 1.7× from this view, level=1, dx=0.0, dy=0.0, targetX=0.5, targetY=0.5, score=0.0, frame=Box(l=0.252, t=0.16800001, r=0.832, b=0.748), zoom=1.7241378, focusLabel=null, reason=Concentrate visible detail, scope=scene, confidence=0.65)
+Advice(key=zoom_in, text=Zoom in about 1.7× from this view, level=1, dx=0.0, dy=0.0, targetX=0.5, targetY=0.5, score=0.0, frame=Box(l=0.252, t=0.16800001, r=0.832, b=0.748), zoom=1.7241378, focusLabel=null, reason=Concentrate visible detail, scope=scene, confidence=0.65)

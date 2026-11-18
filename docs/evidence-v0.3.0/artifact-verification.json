@@ -1,0 +1,11 @@
+{
+  "apkBytes": 124107096,
+  "apkSha256": "da2c35ef820a848e8a7568c162d785536ab2070ccb22044f6d08117e6e3fb042",
+  "nativeLibraryCount": 12,
+  "signature": "verified",
+  "permissions": "verified",
+  "archiveIntegrity": "passed",
+  "bundledModels": "verified",
+  "zip16KBAlignment": "passed",
+  "elf64PageAlignment": "passed"
+}

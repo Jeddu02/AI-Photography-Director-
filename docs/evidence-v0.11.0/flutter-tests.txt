@@ -1,0 +1,9 @@
+00:00 +0: loading test/director_test.dart
+00:00 +0: test/director_test.dart: loads persisted settings and actual native state
+00:00 +1: test/director_test.dart: settings save preserves other keys
+00:00 +2: test/director_test.dart: failed persistence restores prior selection
+00:00 +3: test/director_test.dart: consent denial returns idle and a clear error
+00:00 +4: test/director_test.dart: duplicate start suppressed while consent pending
+00:01 +5: test/ui_test.dart: phone dashboard and mode selection render
+00:04 +6: test/ui_test.dart: permission flow and settings work on narrow screen
+00:06 +7: All tests passed!

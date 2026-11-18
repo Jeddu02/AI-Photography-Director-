@@ -1,0 +1,1 @@
+PASS: final APK DEX contains subject selection, whole-scene, lost-subject and framing-reason strings.

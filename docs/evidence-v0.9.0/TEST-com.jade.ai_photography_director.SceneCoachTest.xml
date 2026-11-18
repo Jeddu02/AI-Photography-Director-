@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.jade.ai_photography_director.SceneCoachTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T04:01:51.253Z" hostname="1f4ce3be924b" time="0.022">
+  <properties/>
+  <testcase name="horizontalMirrorGetsStructuralVote" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.006"/>
+  <testcase name="diagonalWedgeGetsConvergenceVote" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.002"/>
+  <testcase name="upperAndLowerPreferencesGenerateOrderedCrops" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.0"/>
+  <testcase name="weakTrackingDampsJitter" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.0"/>
+  <testcase name="brightBackgroundAndDarkSubject" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.002"/>
+  <testcase name="reviewDoesNotMutatePixelsOrInferMotion" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.004"/>
+  <testcase name="disappearedSelectionPrecedesDarkSceneWarning" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.002"/>
+  <testcase name="emptySideBesideSubjectCanEarnQuietSpace" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.001"/>
+  <testcase name="threeBorderBandsSuggestFramingAroundOpening" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.001"/>
+  <testcase name="flatWallHasNoStructuralAdvice" classname="com.jade.ai_photography_director.SceneCoachTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

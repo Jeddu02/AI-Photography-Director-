@@ -1,0 +1,28 @@
+[+3204 ms] Resolve mutations for :app:createReleaseApkListingFileRedirect (Thread[#46,included builds,5,main]) started.
+[        ] :app:createReleaseApkListingFileRedirect (Thread[#46,included builds,5,main]) started.
+[  +93 ms] > Task :app:createReleaseApkListingFileRedirect
+[        ] Caching disabled for task ':app:createReleaseApkListingFileRedirect' because:
+[        ]   Build cache is disabled
+[        ]   Caching has been disabled for the task
+[        ] Task ':app:createReleaseApkListingFileRedirect' is not up-to-date because:
+[        ]   No history is available.
+[        ] Resolve mutations for :app:assembleRelease (Thread[#46,included builds,5,main]) started.
+[        ] :app:assembleRelease (Thread[#46,included builds,5,main]) started.
+[        ] > Task :app:assembleRelease
+[        ] Skipping task ':app:assembleRelease' as it has no actions.
+[        ] AAPT2 aapt2-9.3.1-15703166-linux Daemon #0: shutdown
+[        ] Android Lint: Disposing Uast application environment in lint classloader [32.3.1_0b369f892e9c9b213f9ba7ce18eb8fc3_true]
+[        ] [Incubating] Problems report is available at: file:///workspace/scratch/0c07d131573a/ai_photography_director/build/reports/problems/problems-report.html
+[        ] Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+[        ] You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+[        ] For more on this, please refer to https://docs.gradle.org/9.5.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+[        ] BUILD SUCCESSFUL in 3m 56s
+[        ] 62 actionable tasks: 58 executed, 4 up-to-date
+[        ] Some of the file system contents retained in the virtual file system are on file systems that Gradle doesn't support watching. The relevant state was discarded to ensure changes to these locations are properly detected. You can override this by explicitly enabling file system watching.
+[ +175 ms] Running Gradle task 'assembleRelease'... (completed in 236.8s)
+[   +2 ms] Calculate SHA1: LocalDirectory: '/workspace/scratch/0c07d131573a/ai_photography_director/build/app/outputs/flutter-apk'/app-release.apk
+[ +947 ms] ✓ Built build/app/outputs/flutter-apk/app-release.apk (124.1MB)
+[   +2 ms] "flutter apk" took 237,946ms.
+[   +1 ms] Running 2 shutdown hooks
+[        ] Shutdown hooks complete
+[        ] exiting with code 0

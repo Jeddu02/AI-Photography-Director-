@@ -1,0 +1,17 @@
+.dart_tool/
+.gradle/
+build/
+.idea/
+*.iml
+*.jks
+*.keystore
+key.properties
+signing.json
+android/local.properties
+android/.gradle/
+GeneratedPluginRegistrant.java
+.flutter-plugins-dependencies
+outputs/
+
+.signing/
+*Private_Signing*.zip

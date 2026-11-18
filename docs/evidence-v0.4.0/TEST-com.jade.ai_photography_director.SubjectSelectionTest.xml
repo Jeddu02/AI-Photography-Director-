@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.jade.ai_photography_director.SubjectSelectionTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-11-17T23:32:31.225Z" hostname="ed172241382a" time="0.029">
+  <properties/>
+  <testcase name="lostSelectionCannotBecomeReadyThroughHysteresis" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.004"/>
+  <testcase name="interpolationIgnoresTinyJitterButFollowsMeaningfulChanges" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.0"/>
+  <testcase name="nearBottomPersonGetsWidenWarningBeforeCapture" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.001"/>
+  <testcase name="noOverlapDoesNotInventASeparationInstruction" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.001"/>
+  <testcase name="explicitLockNeverFallsBackToDifferentInstance" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.002"/>
+  <testcase name="automaticSubjectSwitchRestartsReadiness" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.002"/>
+  <testcase name="cropMustIncludeSelectedSubjectWithBreathingRoom" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.001"/>
+  <testcase name="unrelatedFaceCannotBlockSelectedObjectForClosedEyes" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.001"/>
+  <testcase name="explicitSubjectOverridesModeWithoutInventingAClass" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.001"/>
+  <testcase name="candidateMenuIsBoundedAndDistinguishesSameClassByPosition" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.002"/>
+  <testcase name="wholeSceneOffersOnlyWideFraming" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.003"/>
+  <testcase name="explicitWholeSceneCanBeFramedEvenWithoutTexture" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.003"/>
+  <testcase name="uniformSceneDoesNotInventAnAutomaticZoom" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.001"/>
+  <testcase name="sceneChoiceSurvivesObservationGapButClearResetsIt" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.005"/>
+  <testcase name="availabilityChecksBothIdAndClassAndConfidence" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.0"/>
+  <testcase name="boxOverlapWarningDoesNotMistakeAssociatedFaceForDistraction" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.0"/>
+  <testcase name="choiceOverridesAutomaticPersonPriority" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.001"/>
+  <testcase name="cropCannotCutAnUnselectedPerson" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.0"/>
+  <testcase name="candidateMenuSuppressesDuplicateFaceAndUncertainDetections" classname="com.jade.ai_photography_director.SubjectSelectionTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

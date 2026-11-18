@@ -1,0 +1,33 @@
+name: Android source checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.50.0'
+          channel: stable
+          cache: true
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'ndk;28.2.13676358'
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - name: Configure local SDK paths
+        run: |
+          python3 - <<'PYCONFIG'
+          import os, pathlib, shutil
+          flutter=pathlib.Path(shutil.which('flutter')).resolve().parent.parent
+          sdk=os.environ.get('ANDROID_HOME') or os.environ['ANDROID_SDK_ROOT']
+          pathlib.Path('android/local.properties').write_text(f'flutter.sdk={flutter}\nsdk.dir={sdk}\n')
+          PYCONFIG
+          chmod +x android/gradlew
+      - run: cd android && ./gradlew :app:testDebugUnitTest

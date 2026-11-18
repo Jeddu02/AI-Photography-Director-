@@ -1,0 +1,10 @@
+package: com.jade.ai_photography_director
+uses-permission: name='android.permission.SYSTEM_ALERT_WINDOW'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='android.permission.FOREGROUND_SERVICE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION'
+uses-permission: name='android.permission.FOREGROUND_SERVICE_SPECIAL_USE'
+permission: com.jade.ai_photography_director.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission: name='com.jade.ai_photography_director.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
+
+Exit code: 0

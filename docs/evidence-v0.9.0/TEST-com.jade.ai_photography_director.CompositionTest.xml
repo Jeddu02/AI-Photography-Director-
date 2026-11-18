@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.jade.ai_photography_director.CompositionTest" tests="17" skipped="0" failures="0" errors="0" timestamp="2026-11-18T04:01:51.079Z" hostname="1f4ce3be924b" time="0.064">
+  <properties/>
+  <testcase name="groupIncludesEveryDetectedPerson" classname="com.jade.ai_photography_director.CompositionTest" time="0.046"/>
+  <testcase name="matchingIsOneToOne" classname="com.jade.ai_photography_director.CompositionTest" time="0.004"/>
+  <testcase name="darknessOverridesPlacement" classname="com.jade.ai_photography_director.CompositionTest" time="0.001"/>
+  <testcase name="longGapStartsFreshReadinessStreak" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="closedEyeEstimateBlocksReady" classname="com.jade.ai_photography_director.CompositionTest" time="0.001"/>
+  <testcase name="imageSpaceDirections" classname="com.jade.ai_photography_director.CompositionTest" time="0.008"/>
+  <testcase name="movementBlocksReadiness" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="trackingRetainsIdAndSmooths" classname="com.jade.ai_photography_director.CompositionTest" time="0.001"/>
+  <testcase name="rotationRoundTrip" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="previewMapping" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="lowConfidenceNeverReady" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="manualAndLandscapeDoNotClaimReady" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="readinessAppearsOnNextQualifyingObservationWithoutTimer" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="foodDoesNotUseUnrelatedObject" classname="com.jade.ai_photography_director.CompositionTest" time="0.001"/>
+  <testcase name="interruptedReadinessRequiresFreshObservations" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="motionImmediatelyRevokesCaptureAdvice" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <testcase name="croppingBlocksReadiness" classname="com.jade.ai_photography_director.CompositionTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

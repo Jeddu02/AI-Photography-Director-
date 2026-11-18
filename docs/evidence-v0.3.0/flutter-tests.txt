@@ -1,0 +1,19 @@
+Resolving dependencies...
+Downloading packages...
+  flutter_lints 5.0.0 (6.0.0 available)
+  lints 5.1.1 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  test_api 0.7.14 (0.7.15 available)
+  vector_math 2.4.3 (2.4.4 available)
+Got dependencies!
+5 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart
+00:00 +0: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: loads persisted settings and actual native state
+00:00 +1: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: settings save preserves other keys
+00:00 +2: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: failed persistence restores prior selection
+00:00 +3: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: consent denial returns idle and a clear error
+00:00 +4: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: duplicate start suppressed while consent pending
+00:00 +5: /workspace/scratch/0c07d131573a/ai_photography_director/test/ui_test.dart: phone dashboard and mode selection render
+00:01 +6: /workspace/scratch/0c07d131573a/ai_photography_director/test/ui_test.dart: permission flow and settings work on narrow screen
+00:02 +7: All tests passed!

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.jade.ai_photography_director.ShotDirectorTest" tests="21" skipped="0" failures="0" errors="0" timestamp="2026-11-17T23:32:31.061Z" hostname="ed172241382a" time="0.153">
+  <properties/>
+  <testcase name="imageRegistrationRecognizesPanAndZoom" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.024"/>
+  <testcase name="darkSceneNeverRecommendsZoomOrCapture" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.002"/>
+  <testcase name="exposureFailureOverridesShotSearch" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.002"/>
+  <testcase name="portraitWithoutDetectedPeopleCannotRecommendCapture" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.003"/>
+  <testcase name="transformTracksGoalUntilItFillsCurrentView" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.001"/>
+  <testcase name="concentratedUnlabelledDetailCanStillEarnTighterFraming" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.035"/>
+  <testcase name="lockedSceneDoesNotKeepRequestingMoreZoom" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.008"/>
+  <testcase name="proposalsAreBoundedAndMatchPreviewAspect" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.008"/>
+  <testcase name="groupFramesNeverCutADetectedMember" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.003"/>
+  <testcase name="nextShotCanSelectAnotherCandidate" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.014"/>
+  <testcase name="emptyUniformSceneDoesNotInventShot" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.0"/>
+  <testcase name="nextDoesNotInventAnotherCropWhenOnlyWideViewQualifies" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.012"/>
+  <testcase name="unlabelledSceneryCanReachFramingReadiness" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.007"/>
+  <testcase name="unlabelledSceneWithMarginalCropGainKeepsWiderView" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.006"/>
+  <testcase name="croppedSubjectNeverGetsCaptureRecommendation" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.002"/>
+  <testcase name="smallSubjectEarnsRelativeZoom" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.015"/>
+  <testcase name="displayInterpolationIsContinuousAndDoesNotOvershoot" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.001"/>
+  <testcase name="identicalFramesDoNotMoveOrInventZoom" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.002"/>
+  <testcase name="subjectZoomProgressReducesRemainingZoom" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.002"/>
+  <testcase name="alignedRecognizedSubjectCanBecomeReadyAfterFraming" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.002"/>
+  <testcase name="aimArrowAgreesWithHighlightedScreenPosition" classname="com.jade.ai_photography_director.ShotDirectorTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

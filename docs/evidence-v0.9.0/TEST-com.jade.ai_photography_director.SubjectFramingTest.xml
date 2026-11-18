@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.jade.ai_photography_director.SubjectFramingTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T04:01:51.456Z" hostname="1f4ce3be924b" time="0.006">
+  <properties/>
+  <testcase name="automaticGroupFramingPrefersBalanceAroundTheCenter" classname="com.jade.ai_photography_director.SubjectFramingTest" time="0.001"/>
+  <testcase name="headroomRewardsModerateClearanceOverExcessEmptySpace" classname="com.jade.ai_photography_director.SubjectFramingTest" time="0.0"/>
+  <testcase name="cropPlannerUsesTheChosenThirdAndPreservesTheFullPerson" classname="com.jade.ai_photography_director.SubjectFramingTest" time="0.004"/>
+  <testcase name="faceOutsideSelectedSubjectDoesNotChooseFacingSide" classname="com.jade.ai_photography_director.SubjectFramingTest" time="0.001"/>
+  <testcase name="lookingRoomFollowsDetectedFaceDirection" classname="com.jade.ai_photography_director.SubjectFramingTest" time="0.0"/>
+  <testcase name="explicitThirdsRankOppositeCropsHigher" classname="com.jade.ai_photography_director.SubjectFramingTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,9 @@
+00:00 +0: loading /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart
+00:00 +0: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: loads persisted settings and actual native state
+00:00 +1: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: settings save preserves other keys
+00:00 +2: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: failed persistence restores prior selection
+00:00 +3: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: consent denial returns idle and a clear error
+00:00 +4: /workspace/scratch/0c07d131573a/ai_photography_director/test/director_test.dart: duplicate start suppressed while consent pending
+00:00 +5: /workspace/scratch/0c07d131573a/ai_photography_director/test/ui_test.dart: phone dashboard and mode selection render
+00:02 +6: /workspace/scratch/0c07d131573a/ai_photography_director/test/ui_test.dart: permission flow and settings work on narrow screen
+00:04 +7: All tests passed!

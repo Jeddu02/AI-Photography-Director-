@@ -1,0 +1,74 @@
+name: Build signed Android APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.50.0'
+          channel: stable
+          cache: true
+      - uses: android-actions/setup-android@v3
+      - name: Install Android build dependencies
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'ndk;28.2.13676358'
+      - name: Configure local SDK paths
+        run: |
+          python3 - <<'PYCONFIG'
+          import os
+          import pathlib
+          import shutil
+
+          flutter = pathlib.Path(shutil.which("flutter")).resolve().parent.parent
+          sdk = os.environ.get("ANDROID_HOME") or os.environ["ANDROID_SDK_ROOT"]
+          pathlib.Path("android/local.properties").write_text(f"flutter.sdk={flutter}\nsdk.dir={sdk}\n")
+          PYCONFIG
+          chmod +x android/gradlew
+      - name: Test and build signed release
+        env:
+          APD_KEYSTORE_BASE64: ${{ secrets.APD_KEYSTORE_BASE64 }}
+          APD_STORE_PASSWORD: ${{ secrets.APD_STORE_PASSWORD }}
+          APD_KEY_ALIAS: ${{ secrets.APD_KEY_ALIAS }}
+          APD_KEY_PASSWORD: ${{ secrets.APD_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${APD_KEYSTORE_BASE64:?Add the original release keystore as APD_KEYSTORE_BASE64}"
+          : "${APD_STORE_PASSWORD:?Add APD_STORE_PASSWORD}"
+          : "${APD_KEY_ALIAS:?Add APD_KEY_ALIAS}"
+          : "${APD_KEY_PASSWORD:?Add APD_KEY_PASSWORD}"
+          umask 077
+          export APD_KEYSTORE
+          APD_KEYSTORE="$(mktemp "$RUNNER_TEMP/apd-release.XXXXXX")"
+          trap 'rm -f -- "$APD_KEYSTORE"' EXIT
+          printf '%s' "$APD_KEYSTORE_BASE64" | base64 --decode > "$APD_KEYSTORE"
+          unset APD_KEYSTORE_BASE64
+          bash tools/build_release.sh
+      - name: Validate APK and signing certificate
+        run: |
+          set -euo pipefail
+          sdk="${ANDROID_HOME:-${ANDROID_SDK_ROOT:?Android SDK unavailable}}"
+          apk=build/app/outputs/flutter-apk/app-release.apk
+          python3 tools/verify_apk.py "$apk" --build-tools "$sdk/build-tools/36.0.0" \
+            --output release/verification --require-camera
+          python3 tools/check_release_identity.py pubspec.yaml release/verification docs/evidence-v0.13.0
+          version="$(sed -nE 's/^version:[[:space:]]+([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+$/\1/p' pubspec.yaml)"
+          test -n "$version"
+          cp "$apk" "release/AI_Photography_Director_v$version.apk"
+      - name: Upload verified APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-Photography-Director-APK
+          path: release/
+          if-no-files-found: error
