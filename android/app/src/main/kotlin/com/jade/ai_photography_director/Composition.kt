@@ -109,6 +109,17 @@ class CompositionEngine {
         reset()
     }
 
+    fun shotChoices(): List<String> = director.choices()
+
+    fun selectShot(index: Int) {
+        director.select(index)
+        candidate = ""
+        since = 0
+        readyScope = null
+        lastObservation = 0
+        current = Advice("search", "Aligning selected composition")
+    }
+
     fun nextShot() {
         director.next()
         candidate = ""
