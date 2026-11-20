@@ -439,7 +439,7 @@ class AiCameraActivity : ComponentActivity() {
                     val title = android.widget.TextView(this).apply {
                         text = "${index + 1}. ${proposal.reason.ifBlank { "Suggested framing" }}"
                         textSize = 16f
-                        setTextColor(Color.WHITE)
+                        setTextColor(if ((resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES) Color.WHITE else Color.BLACK)
                     }
                     card.addView(title)
                     val previewDiagram = object : View(this) {
@@ -447,8 +447,8 @@ class AiCameraActivity : ComponentActivity() {
                         override fun onDraw(canvas: android.graphics.Canvas) {
                             super.onDraw(canvas)
                             val inset = dp(8).toFloat()
-                            val w = width - inset * 2
-                            val h = height - inset * 2
+                            val w = (width - inset * 2).coerceAtLeast(0f)
+                            val h = (height - inset * 2).coerceAtLeast(0f)
                             paint.style = android.graphics.Paint.Style.STROKE
                             paint.strokeWidth = dp(2).toFloat()
                             paint.color = Color.LTGRAY
@@ -456,8 +456,13 @@ class AiCameraActivity : ComponentActivity() {
                             paint.color = Color.rgb(255, 193, 7)
                             paint.strokeWidth = dp(3).toFloat()
                             val f = proposal.frame
+                            // Crop proposals may extend beyond the current viewfinder.
+                            // Clip the diagram so it remains readable in the selection card.
+                            canvas.save()
+                            canvas.clipRect(inset, inset, inset + w, inset + h)
                             canvas.drawRect(inset + f.l * w, inset + f.t * h,
                                 inset + f.r * w, inset + f.b * h, paint)
+                            canvas.restore()
                         }
                     }
                     card.addView(previewDiagram, LinearLayout.LayoutParams(-1, dp(82)))
