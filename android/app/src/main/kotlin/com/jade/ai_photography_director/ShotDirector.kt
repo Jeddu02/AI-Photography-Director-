@@ -357,6 +357,7 @@ class ShotDirector {
     private var previousFocus: Focus? = null
     private var selected: ShotProposal? = null
     private var alternate = 0
+    @Volatile private var availableChoices: List<String> = emptyList()
     private var misses = 0
     private var choice: SubjectChoice = SubjectChoice.Automatic
     private var regionReference: SceneMap? = null
@@ -384,12 +385,21 @@ class ShotDirector {
         selected = null
         alternate = 0
         misses = 0
+        availableChoices = emptyList()
     }
 
     fun next() {
         val next = alternate + 1
         reset()
         alternate = next
+    }
+
+    fun choices(): List<String> = availableChoices
+
+    fun select(index: Int) {
+        if (index !in availableChoices.indices) return
+        reset()
+        alternate = index
     }
 
     fun evaluate(f: Features, mode: String, preference: String, threshold: Float): Advice {
@@ -501,6 +511,9 @@ class ShotDirector {
             val choices = planner.rank(f, mode, preference, threshold, activeChoice)
             if (choices.isEmpty())
                 return Advice("scan", "Pan slowly to find a clearer subject or detail")
+            availableChoices = choices.take(3).mapIndexed { index, proposal ->
+                "${index + 1}. ${proposal.reason.ifBlank { "Suggested frame" }}"
+            }
             selected = choices[alternate % choices.size]
             goal = selected!!.frame
         }
