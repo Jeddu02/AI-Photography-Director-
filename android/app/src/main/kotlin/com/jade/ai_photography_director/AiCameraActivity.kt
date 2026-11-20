@@ -1525,7 +1525,74 @@ class AiCameraActivity : ComponentActivity() {
                 updateControls()
             }
         })
-        strip("tools",actions.map {it.text.toString()},-1){ i-> modeStrip();actions[i].performClick() }
+        // Spacious, scrollable camera controls replace the two-item paging strip.
+        val quick = mutableListOf<Pair<String, () -> Unit>>()
+        if (timerButton.isEnabled) quick.add("Timer · ${timerLabel()}" to { timerButton.performClick(); showTools() })
+        quick.add("Ratio · ${displayRatio.label(portrait)}" to { ratioMenu.performClick() })
+        if (looksControl.isEnabled) quick.add("Filters & lighting" to { looksControl.performClick() })
+        if (exposure.isEnabled) quick.add("Exposure" to { exposure.performClick() })
+        val entries = quick + actions.map { action ->
+            action.text.toString() to { action.performClick() }
+        }
+        val surface = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(16), dp(20), dp(20))
+            setBackgroundColor(Color.rgb(20, 22, 27))
+        }
+        surface.addView(TextView(this).apply {
+            text = "CAMERA CONTROLS"
+            textSize = 12f
+            letterSpacing = .16f
+            setTextColor(Color.rgb(247, 207, 65))
+        })
+        surface.addView(TextView(this).apply {
+            text = "Adjust your shot"
+            textSize = 24f
+            setTextColor(Color.WHITE)
+            setPadding(0, dp(4), 0, dp(18))
+        })
+        val grid = android.widget.GridLayout(this).apply { columnCount = 2 }
+        lateinit var dialog: android.app.AlertDialog
+        entries.forEachIndexed { index, entry ->
+            val tile = button(entry.first) {
+                dialog.dismiss()
+                entry.second()
+            }.apply {
+                textSize = 15f
+                gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                setPadding(dp(16), dp(12), dp(16), dp(12))
+                minHeight = dp(76)
+                maxLines = 2
+                ellipsize = TextUtils.TruncateAt.END
+                background = android.graphics.drawable.RippleDrawable(
+                    ColorStateList.valueOf(0x44ffffff),
+                    android.graphics.drawable.GradientDrawable().apply {
+                        cornerRadius = dp(18).toFloat()
+                        setColor(Color.rgb(39, 43, 51))
+                    }, null
+                )
+            }
+            grid.addView(tile, android.widget.GridLayout.LayoutParams().apply {
+                width = 0
+                height = dp(82)
+                columnSpec = android.widget.GridLayout.spec(index % 2, 1f)
+                rowSpec = android.widget.GridLayout.spec(index / 2)
+                setMargins(dp(4), dp(4), dp(4), dp(4))
+            })
+        }
+        surface.addView(grid)
+        val scroll = ScrollView(this).apply { addView(surface) }
+        dialog = android.app.AlertDialog.Builder(this)
+            .setView(scroll)
+            .setNegativeButton("Done", null)
+            .create()
+        dialog.setOnDismissListener { modeStrip() }
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * .94f).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
 
     }
 
