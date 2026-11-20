@@ -1416,22 +1416,67 @@ class AiCameraActivity : ComponentActivity() {
     }
 
     private fun chooseMode() {
-        val choices=mutableListOf("Photo","Portrait","Manual","Video","Cinematic","Time-lapse","Pano")
-        val info=runCatching { provider?.getCameraInfo(selector()) }.getOrNull()
-        if(info!=null && !Recorder.getHighSpeedVideoCapabilities(info)?.getSupportedQualities(DynamicRange.SDR).isNullOrEmpty()) choices.add("Slo-mo")
-        if(extensions?.isExtensionAvailable(selector(),ExtensionMode.NIGHT)==true) choices.add("Night")
-        dockPage="more"
-        val grid=android.widget.GridLayout(this).apply {columnCount=3;setBackgroundColor(Color.rgb(22,23,26))}
-        for(choice in choices+listOf("Close")) {
-            val b=icon(modeGlyph(choice)+"\n"+choice,choice){
-                if(choice=="Close")modeStrip() else switchMode(choice)
-            }.apply {textSize=13f}
-            grid.addView(b,android.widget.GridLayout.LayoutParams().apply {
-                width=0;height=dp(54);columnSpec=android.widget.GridLayout.spec(android.widget.GridLayout.UNDEFINED,1f)
+        val choices = mutableListOf("Photo", "Portrait", "Manual", "Video", "Cinematic", "Time-lapse", "Pano")
+        val info = runCatching { provider?.getCameraInfo(selector()) }.getOrNull()
+        if (info != null && !Recorder.getHighSpeedVideoCapabilities(info)
+                ?.getSupportedQualities(DynamicRange.SDR).isNullOrEmpty()) choices.add("Slo-mo")
+        if (extensions?.isExtensionAvailable(selector(), ExtensionMode.NIGHT) == true) choices.add("Night")
+        val surface = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(16))
+            background = roundedSurface(Color.rgb(21, 23, 29), 26)
+        }
+        surface.addView(TextView(this).apply {
+            text = "SHOOTING MODES"
+            textSize = 12f
+            letterSpacing = .12f
+            setTextColor(Color.rgb(247, 207, 65))
+        })
+        surface.addView(TextView(this).apply {
+            text = "Choose a mode"
+            textSize = 23f
+            setTextColor(Color.WHITE)
+            setPadding(0, dp(4), 0, dp(14))
+        })
+        val grid = android.widget.GridLayout(this).apply { columnCount = 2 }
+        lateinit var dialog: AlertDialog
+        choices.forEachIndexed { index, mode ->
+            val active = mode == shooting
+            val tile = button("${modeGlyph(mode)}   $mode") {
+                dialog.dismiss()
+                if (mode != shooting) switchMode(mode)
+            }.apply {
+                textSize = 15f
+                gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                setPadding(dp(16), 0, dp(12), 0)
+                setTextColor(if (active) Color.rgb(247, 207, 65) else Color.WHITE)
+                background = roundedSurface(
+                    if (active) Color.rgb(65, 56, 34) else Color.rgb(38, 42, 49), 16
+                )
+            }
+            grid.addView(tile, android.widget.GridLayout.LayoutParams().apply {
+                width = 0
+                height = dp(64)
+                columnSpec = android.widget.GridLayout.spec(index % 2, 1, 1f)
+                rowSpec = android.widget.GridLayout.spec(index / 2)
+                setMargins(dp(4), dp(4), dp(4), dp(4))
             })
         }
-        dock.removeAllViews();dock.addView(grid)
+        surface.addView(grid)
+        dialog = AlertDialog.Builder(this).setView(surface).setNegativeButton("Close", null).create()
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * .94f).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
+
+    private fun roundedSurface(color: Int, radius: Int) =
+        android.graphics.drawable.GradientDrawable().apply {
+            cornerRadius = dp(radius).toFloat()
+            setColor(color)
+        }
 
     private fun switchMode(choice:String){
             if(!modeControl.isEnabled)return
@@ -1526,74 +1571,97 @@ class AiCameraActivity : ComponentActivity() {
             }
         })
         // Spacious, scrollable camera controls replace the two-item paging strip.
+        // Group related controls, remove duplicates, and keep the live preview visible.
         val quick = mutableListOf<Pair<String, () -> Unit>>()
-        if (timerButton.isEnabled) quick.add("Timer · ${timerLabel()}" to { timerButton.performClick(); showTools() })
-        quick.add("Ratio · ${displayRatio.label(portrait)}" to { ratioMenu.performClick() })
+        if (timerButton.isEnabled) quick.add("Timer · ${timerLabel()}" to {
+            timerButton.performClick()
+            showTools()
+        })
+        if (ratioMenu.isEnabled) quick.add("Aspect ratio · ${displayRatio.label(portrait)}" to {
+            ratioMenu.performClick()
+        })
         if (looksControl.isEnabled) quick.add("Filters & lighting" to { looksControl.performClick() })
         if (exposure.isEnabled) quick.add("Exposure" to { exposure.performClick() })
-        val entries = quick + actions.map { action ->
+        val duplicates = setOf(flashButton, gridButton, timerButton, levelButton)
+        val capture = mutableListOf<Pair<String, () -> Unit>>()
+        if (flashButton.isEnabled) capture.add(flashButton.text.toString() to {
+            flashButton.performClick()
+            showTools()
+        })
+        if (gridButton.isEnabled) capture.add(gridButton.text.toString() to {
+            gridButton.performClick()
+            showTools()
+        })
+        if (levelButton.isEnabled) capture.add(levelButton.text.toString() to {
+            levelButton.performClick()
+            showTools()
+        })
+        val advanced = actions.filter { it !in duplicates }.map { action ->
             action.text.toString() to { action.performClick() }
         }
         val surface = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(20), dp(16), dp(20), dp(20))
-            setBackgroundColor(Color.rgb(20, 22, 27))
+            setPadding(dp(18), dp(16), dp(18), dp(16))
+            background = roundedSurface(Color.rgb(20, 22, 27), 24)
         }
         surface.addView(TextView(this).apply {
-            text = "CAMERA CONTROLS"
+            text = "CAMERA SETTINGS"
             textSize = 12f
-            letterSpacing = .16f
+            letterSpacing = .13f
             setTextColor(Color.rgb(247, 207, 65))
         })
         surface.addView(TextView(this).apply {
-            text = "Adjust your shot"
-            textSize = 24f
+            text = "Fine-tune your shot"
+            textSize = 23f
             setTextColor(Color.WHITE)
-            setPadding(0, dp(4), 0, dp(18))
+            setPadding(0, dp(3), 0, dp(10))
         })
-        val grid = android.widget.GridLayout(this).apply { columnCount = 2 }
-        lateinit var dialog: android.app.AlertDialog
-        entries.forEachIndexed { index, entry ->
-            val tile = button(entry.first) {
-                dialog.dismiss()
-                entry.second()
-            }.apply {
-                textSize = 15f
-                gravity = Gravity.CENTER_VERTICAL or Gravity.START
-                setPadding(dp(16), dp(12), dp(16), dp(12))
-                minHeight = dp(76)
-                maxLines = 2
-                ellipsize = TextUtils.TruncateAt.END
-                background = android.graphics.drawable.RippleDrawable(
-                    ColorStateList.valueOf(0x44ffffff),
-                    android.graphics.drawable.GradientDrawable().apply {
-                        cornerRadius = dp(18).toFloat()
-                        setColor(Color.rgb(39, 43, 51))
-                    }, null
-                )
-            }
-            grid.addView(tile, android.widget.GridLayout.LayoutParams().apply {
-                width = 0
-                height = dp(82)
-                columnSpec = android.widget.GridLayout.spec(index % 2, 1, 1f)
-                rowSpec = android.widget.GridLayout.spec(index / 2)
-                setMargins(dp(4), dp(4), dp(4), dp(4))
+        lateinit var dialog: AlertDialog
+        fun section(title: String, entries: List<Pair<String, () -> Unit>>) {
+            if (entries.isEmpty()) return
+            surface.addView(TextView(this).apply {
+                text = title
+                textSize = 13f
+                setTextColor(Color.LTGRAY)
+                setPadding(dp(4), dp(12), 0, dp(6))
             })
+            val grid = android.widget.GridLayout(this).apply { columnCount = 2 }
+            entries.forEachIndexed { index, entry ->
+                val tile = button(entry.first) {
+                    dialog.dismiss()
+                    entry.second()
+                }.apply {
+                    textSize = 14f
+                    gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                    setPadding(dp(14), dp(8), dp(12), dp(8))
+                    maxLines = 2
+                    ellipsize = TextUtils.TruncateAt.END
+                    background = roundedSurface(Color.rgb(39, 43, 51), 15)
+                }
+                grid.addView(tile, android.widget.GridLayout.LayoutParams().apply {
+                    width = 0
+                    height = dp(62)
+                    columnSpec = android.widget.GridLayout.spec(index % 2, 1, 1f)
+                    rowSpec = android.widget.GridLayout.spec(index / 2)
+                    setMargins(dp(4), dp(4), dp(4), dp(4))
+                })
+            }
+            surface.addView(grid)
         }
-        surface.addView(grid)
-        val scroll = ScrollView(this).apply { addView(surface) }
-        dialog = android.app.AlertDialog.Builder(this)
-            .setView(scroll)
-            .setNegativeButton("Done", null)
-            .create()
-        dialog.setOnDismissListener { modeStrip() }
+        section("QUICK ADJUSTMENTS", quick)
+        section("CAPTURE", capture)
+        section("ADVANCED", advanced)
+        val scroll = ScrollView(this).apply {
+            isFillViewport = false
+            addView(surface)
+        }
+        dialog = AlertDialog.Builder(this).setView(scroll).setNegativeButton("Done", null).create()
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * .94f).toInt(),
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            (resources.displayMetrics.heightPixels * .75f).toInt()
         )
-
     }
 
     private fun closeTray() { tray?.let { viewfinder.removeView(it) };tray=null }
