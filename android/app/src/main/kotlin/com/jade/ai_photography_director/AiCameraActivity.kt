@@ -419,9 +419,49 @@ class AiCameraActivity : ComponentActivity() {
             if (choices.isEmpty()) {
                 status.text = "Scan the scene first to find composition options"
             } else {
-                android.app.AlertDialog.Builder(this)
+                val list = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(dp(16), dp(8), dp(16), dp(8))
+                }
+                val dialog = android.app.AlertDialog.Builder(this)
                     .setTitle("Choose composition")
-                    .setItems(choices.toTypedArray()) { _, index ->
+                    .setView(android.widget.ScrollView(this).apply { addView(list) })
+                    .setNegativeButton("Cancel", null)
+                    .create()
+                choices.forEachIndexed { index, proposal ->
+                    val card = LinearLayout(this).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setPadding(dp(12), dp(8), dp(12), dp(12))
+                        contentDescription = "Composition ${index + 1}: ${proposal.reason}"
+                        isClickable = true
+                        isFocusable = true
+                    }
+                    val title = android.widget.TextView(this).apply {
+                        text = "${index + 1}. ${proposal.reason.ifBlank { "Suggested framing" }}"
+                        textSize = 16f
+                        setTextColor(Color.WHITE)
+                    }
+                    card.addView(title)
+                    val previewDiagram = object : View(this) {
+                        private val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+                        override fun onDraw(canvas: android.graphics.Canvas) {
+                            super.onDraw(canvas)
+                            val inset = dp(8).toFloat()
+                            val w = width - inset * 2
+                            val h = height - inset * 2
+                            paint.style = android.graphics.Paint.Style.STROKE
+                            paint.strokeWidth = dp(2).toFloat()
+                            paint.color = Color.LTGRAY
+                            canvas.drawRect(inset, inset, inset + w, inset + h, paint)
+                            paint.color = Color.rgb(255, 193, 7)
+                            paint.strokeWidth = dp(3).toFloat()
+                            val f = proposal.frame
+                            canvas.drawRect(inset + f.l * w, inset + f.t * h,
+                                inset + f.r * w, inset + f.b * h, paint)
+                        }
+                    }
+                    card.addView(previewDiagram, LinearLayout.LayoutParams(-1, dp(82)))
+                    card.setOnClickListener {
                         if (streaming && !takingPhoto && countdown == null) {
                             val revision = ++framingRevision
                             guide.clear("Aligning selected composition")
@@ -432,9 +472,14 @@ class AiCameraActivity : ComponentActivity() {
                                 }
                             }
                         }
+                        dialog.dismiss()
                     }
-                    .setNegativeButton("Cancel", null)
-                    .show()
+                    list.addView(card)
+                    if (index < choices.lastIndex) list.addView(View(this).apply {
+                        setBackgroundColor(Color.DKGRAY)
+                    }, LinearLayout.LayoutParams(-1, dp(1)))
+                }
+                dialog.show()
             }
         }
         val why =
