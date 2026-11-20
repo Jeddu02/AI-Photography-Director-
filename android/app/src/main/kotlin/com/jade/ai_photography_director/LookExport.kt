@@ -87,7 +87,7 @@ private fun copyCaptureMetadata(context: Context, source: Uri, output: File, ori
             ExifInterface.TAG_DATETIME_ORIGINAL, ExifInterface.TAG_DATETIME_DIGITIZED,
             ExifInterface.TAG_MAKE, ExifInterface.TAG_MODEL, ExifInterface.TAG_FOCAL_LENGTH,
             ExifInterface.TAG_EXPOSURE_TIME, ExifInterface.TAG_F_NUMBER,
-            ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY,
+            ExifInterface.TAG_ISO_SPEED_RATINGS,
         )
         val target = ExifInterface(output.absolutePath)
         context.contentResolver.openInputStream(source)?.use { input ->
