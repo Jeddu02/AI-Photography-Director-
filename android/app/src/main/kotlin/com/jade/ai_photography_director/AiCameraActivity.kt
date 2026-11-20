@@ -414,6 +414,29 @@ class AiCameraActivity : ComponentActivity() {
                 updateLevelSensor()
             }
         nextFrameButton = button("Find another shot") { nextFrame() }
+        val shotChoicesButton = button("Choose composition") {
+            val choices = engine.shotChoices()
+            if (choices.isEmpty()) {
+                status.text = "Scan the scene first to find composition options"
+            } else {
+                android.app.AlertDialog.Builder(this)
+                    .setTitle("Choose composition")
+                    .setItems(choices.toTypedArray()) { _, index ->
+                        if (streaming && !takingPhoto && countdown == null) {
+                            val revision = ++framingRevision
+                            guide.clear("Aligning selected composition")
+                            analyzer.execute {
+                                if (!closed && revision == framingRevision) {
+                                    engine.selectShot(index)
+                                    appliedFramingRevision = revision
+                                }
+                            }
+                        }
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            }
+        }
         val why =
             button("Why this frame?") {
                 android.app.AlertDialog.Builder(this)
@@ -434,7 +457,7 @@ class AiCameraActivity : ComponentActivity() {
                     startActivity(Intent(this, PhotoReviewActivity::class.java).setData(it))
                 }
             }
-        moreActions = listOf(flashButton, gridButton, timerButton, levelButton, nextFrameButton, why, analyzePhoto)
+        moreActions = listOf(flashButton, gridButton, timerButton, levelButton, shotChoicesButton, nextFrameButton, why, analyzePhoto)
         modeControl=button("More"){chooseMode()}
         dock=FrameLayout(this)
         controls.addView(dock,LinearLayout.LayoutParams(-1,-2))
