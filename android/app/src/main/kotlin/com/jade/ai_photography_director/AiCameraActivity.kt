@@ -1596,8 +1596,8 @@ class AiCameraActivity : ComponentActivity() {
             levelButton.performClick()
             showTools()
         })
-        val advanced = actions.filter { it !in duplicates }.map { action ->
-            action.text.toString() to { action.performClick() }
+        val advanced: List<Pair<String, () -> Unit>> = actions.filter { it !in duplicates }.map { action ->
+            action.text.toString() to { action.performClick(); Unit }
         }
         val surface = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
