@@ -185,10 +185,12 @@ class ShotPlanner {
                 it.frame.w > .99f || full == null || it.baseScore - full.baseScore >= requiredGain
             }
         val first = eligible.firstOrNull() ?: return listOfNotNull(full)
+        // Expose at most three feasible choices to the live director: the strongest crop,
+        // a wider fallback when available, and one distinct alternative.
         val diverse = mutableListOf(first)
         if (full != null && full != first) diverse += full
         for (p in eligible) {
-            if (diverse.size == 5) break
+            if (diverse.size == 3) break
             if (
                 p !in diverse &&
                     diverse
