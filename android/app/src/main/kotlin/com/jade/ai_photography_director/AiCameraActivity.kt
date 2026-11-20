@@ -1575,7 +1575,7 @@ class AiCameraActivity : ComponentActivity() {
             grid.addView(tile, android.widget.GridLayout.LayoutParams().apply {
                 width = 0
                 height = dp(82)
-                columnSpec = android.widget.GridLayout.spec(index % 2, 1f)
+                columnSpec = android.widget.GridLayout.spec(index % 2, 1, 1f)
                 rowSpec = android.widget.GridLayout.spec(index / 2)
                 setMargins(dp(4), dp(4), dp(4), dp(4))
             })
