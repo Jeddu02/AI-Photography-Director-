@@ -109,7 +109,7 @@ class CompositionEngine {
         reset()
     }
 
-    fun shotChoices(): List<String> = director.choices()
+    fun shotChoices(): List<ShotProposal> = director.choices()
 
     fun selectShot(index: Int) {
         director.select(index)
