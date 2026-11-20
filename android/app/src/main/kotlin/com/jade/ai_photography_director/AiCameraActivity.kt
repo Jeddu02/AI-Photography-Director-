@@ -413,7 +413,7 @@ class AiCameraActivity : ComponentActivity() {
                 levelButton.text = if (levelEnabled) "Level on" else "Level off"
                 updateLevelSensor()
             }
-        nextFrameButton = button("Next frame") { nextFrame() }
+        nextFrameButton = button("Find another shot") { nextFrame() }
         val why =
             button("Why this frame?") {
                 android.app.AlertDialog.Builder(this)
@@ -823,7 +823,7 @@ class AiCameraActivity : ComponentActivity() {
         if (!streaming || takingPhoto || countdown != null) return
         // Queue the reset on the same thread as the framing engine.
         val revision = ++framingRevision
-        guide.clear("Looking for another frame")
+        guide.clear("Scanning for another composition")
         analyzer.execute {
             if (!closed && revision == framingRevision) {
                 engine.nextShot()
