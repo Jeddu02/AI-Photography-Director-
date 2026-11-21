@@ -325,7 +325,7 @@ class AiCameraActivity : ComponentActivity() {
             gravity = Gravity.CENTER_VERTICAL
         }, LinearLayout.LayoutParams(0, dp(44), 1f))
         val flashHost = FrameLayout(this)
-        val flashTop = icon("ϟ", "Flash off") {
+        val flashTop = icon("ϟ", "Flash") {
             if (flashButton.isEnabled) flashButton.performClick() else status.text = "Flash unavailable"
         }
         flashHost.addView(flashTop, FrameLayout.LayoutParams(dp(48), dp(48)))
