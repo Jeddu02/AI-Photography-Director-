@@ -311,8 +311,8 @@ class AiCameraActivity : ComponentActivity() {
             setBackgroundColor(Color.rgb(12, 14, 18))
         }
         fun top(control: Button, width: Int = 48) {
-            control.minHeight = dp(44)
-            header.addView(control, LinearLayout.LayoutParams(dp(width), dp(44)))
+            control.minHeight = dp(48)
+            header.addView(control, LinearLayout.LayoutParams(dp(width), dp(48)))
         }
         top(icon("‹", "Back") { finish() })
         header.addView(TextView(this).apply {
