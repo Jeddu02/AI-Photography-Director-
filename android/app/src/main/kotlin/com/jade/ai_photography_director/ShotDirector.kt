@@ -185,10 +185,12 @@ class ShotPlanner {
                 it.frame.w > .99f || full == null || it.baseScore - full.baseScore >= requiredGain
             }
         val first = eligible.firstOrNull() ?: return listOfNotNull(full)
+        // Expose at most three feasible choices to the live director: the strongest crop,
+        // a wider fallback when available, and one distinct alternative.
         val diverse = mutableListOf(first)
         if (full != null && full != first) diverse += full
         for (p in eligible) {
-            if (diverse.size == 5) break
+            if (diverse.size == 3) break
             if (
                 p !in diverse &&
                     diverse
@@ -355,6 +357,7 @@ class ShotDirector {
     private var previousFocus: Focus? = null
     private var selected: ShotProposal? = null
     private var alternate = 0
+    @Volatile private var availableProposals: List<ShotProposal> = emptyList()
     private var misses = 0
     private var choice: SubjectChoice = SubjectChoice.Automatic
     private var regionReference: SceneMap? = null
@@ -382,12 +385,21 @@ class ShotDirector {
         selected = null
         alternate = 0
         misses = 0
+        availableProposals = emptyList()
     }
 
     fun next() {
         val next = alternate + 1
         reset()
         alternate = next
+    }
+
+    fun choices(): List<ShotProposal> = availableProposals
+
+    fun select(index: Int) {
+        if (index !in availableProposals.indices) return
+        reset()
+        alternate = index
     }
 
     fun evaluate(f: Features, mode: String, preference: String, threshold: Float): Advice {
@@ -497,8 +509,11 @@ class ShotDirector {
         if (goal == null) {
             if (f.motion > .14f) return Advice("scan", "Pan slowly — looking for a frame")
             val choices = planner.rank(f, mode, preference, threshold, activeChoice)
-            if (choices.isEmpty())
+            if (choices.isEmpty()) {
+                availableProposals = emptyList()
                 return Advice("scan", "Pan slowly to find a clearer subject or detail")
+            }
+            availableProposals = choices.take(3)
             selected = choices[alternate % choices.size]
             goal = selected!!.frame
         }
@@ -542,7 +557,8 @@ class ShotDirector {
                 text = "Zoom out slightly to fit the highlighted frame",
                 zoom = zoom,
             )
-        if (abs(dx) > .055f || abs(dy) > .055f) {
+        // Use a wider center dead zone to reduce directional flicker.
+        if (abs(dx) > .075f || abs(dy) > .075f) {
             val arrow =
                 if (abs(dx) > abs(dy)) {
                     if (dx > 0) "→" else "←"
@@ -559,7 +575,7 @@ class ShotDirector {
                             "↓" -> "Aim lower toward the highlighted area"
                             else -> "Aim higher toward the highlighted area"
                         } + " $arrow"
-                    } else "Center the highlighted area $arrow",
+                    } else "Move the camera $arrow to center the highlighted area",
                 dx = dx,
                 dy = dy,
                 targetX = target.x,

@@ -289,7 +289,7 @@ class AiCameraActivity : ComponentActivity() {
         val root =
             LinearLayout(this).apply {
                 orientation = if (portrait) LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
-                setBackgroundColor(Color.BLACK)
+                setBackgroundColor(Color.rgb(12, 14, 18))
             }
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
             val margin =
@@ -302,19 +302,43 @@ class AiCameraActivity : ComponentActivity() {
         val controls =
             LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
-                setPadding(dp(8), 0, dp(8), dp(2))
+                setPadding(dp(14), dp(8), dp(14), dp(8))
             }
-        val header = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
-        fun top(control: Button) = header.addView(control, LinearLayout.LayoutParams(0,dp(48),1f))
-        top(icon("‹","Back"){finish()})
-        top(icon("ϟ","Flash"){if(flashButton.isEnabled)flashButton.performClick() else status.text="Flash unavailable"})
-        exposure=icon("±","Exposure compensation"){showExposure()};top(exposure)
-        toolsButton=icon("⌃","Camera tools"){if(dockPage=="tools")modeStrip() else showTools()};top(toolsButton)
-        looksControl=icon("◐","Film and lighting"){if(shooting=="Pano")finishPanorama() else openLooks()};top(looksControl)
-        ratioMenu=icon(ratio.label(portrait),"Photo ratio"){
-            val choices=PhotoRatio.entries
-            pick("Photo ratio",choices.map {it.label(portrait)},choices.indexOf(ratio)){chooseRatio(choices[it])}
-        };top(ratioMenu)
+        // Studio camera: compact controls and a deliberately quiet viewfinder.
+        val header = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(12), dp(6), dp(12), dp(6))
+            setBackgroundColor(Color.rgb(12, 14, 18))
+        }
+        fun top(control: Button, width: Int = 48) {
+            control.minHeight = dp(44)
+            header.addView(control, LinearLayout.LayoutParams(dp(width), dp(44)))
+        }
+        top(icon("‹", "Back") { finish() })
+        header.addView(TextView(this).apply {
+            text = "APD  /  STUDIO"
+            textSize = 13f
+            letterSpacing = .13f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER_VERTICAL
+        }, LinearLayout.LayoutParams(0, dp(44), 1f))
+        top(icon("ϟ", "Flash") {
+            if (flashButton.isEnabled) flashButton.performClick() else status.text = "Flash unavailable"
+        })
+        exposure = icon("±", "Exposure compensation") { showExposure() }
+        top(exposure)
+        looksControl = icon("◐", "Film and lighting") {
+            if (shooting == "Pano") finishPanorama() else openLooks()
+        }
+        top(looksControl)
+        toolsButton = icon("⌃", "Camera tools") { showTools() }
+        top(toolsButton)
+        ratioMenu = icon(ratio.label(portrait), "Photo ratio") {
+            val choices = PhotoRatio.entries
+            pick("Photo ratio", choices.map { it.label(portrait) }, choices.indexOf(ratio)) {
+                chooseRatio(choices[it])
+            }
+        }
         if (portrait) root.addView(header) else controls.addView(header)
         viewfinder = FrameLayout(this)
         preview =
@@ -356,7 +380,7 @@ class AiCameraActivity : ComponentActivity() {
         zoomControls.addView(zoomRow, LinearLayout.LayoutParams(-2, dp(48)))
         zoomControls.addView(autoFrame, LinearLayout.LayoutParams(-2, dp(48)).apply { marginStart = dp(6) })
         viewfinder.addView(zoomControls, FrameLayout.LayoutParams(-2, dp(48), Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL).apply {
-            bottomMargin = dp(44)
+            bottomMargin = dp(20)
         })
         aspectHost =
             object : FrameLayout(this) {
@@ -413,7 +437,80 @@ class AiCameraActivity : ComponentActivity() {
                 levelButton.text = if (levelEnabled) "Level on" else "Level off"
                 updateLevelSensor()
             }
-        nextFrameButton = button("Next frame") { nextFrame() }
+        nextFrameButton = button("Find another shot") { nextFrame() }
+        val shotChoicesButton = button("Choose composition") {
+            val choices = engine.shotChoices()
+            if (choices.isEmpty()) {
+                status.text = "Scan the scene first to find composition options"
+            } else {
+                val list = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(dp(16), dp(8), dp(16), dp(8))
+                }
+                val dialog = android.app.AlertDialog.Builder(this)
+                    .setTitle("Choose composition")
+                    .setView(android.widget.ScrollView(this).apply { addView(list) })
+                    .setNegativeButton("Cancel", null)
+                    .create()
+                choices.forEachIndexed { index, proposal ->
+                    val card = LinearLayout(this).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setPadding(dp(12), dp(8), dp(12), dp(12))
+                        contentDescription = "Composition ${index + 1}: ${proposal.reason}"
+                        isClickable = true
+                        isFocusable = true
+                    }
+                    val title = android.widget.TextView(this).apply {
+                        text = "${index + 1}. ${proposal.reason.ifBlank { "Suggested framing" }}"
+                        textSize = 16f
+                        setTextColor(if ((resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES) Color.WHITE else Color.BLACK)
+                    }
+                    card.addView(title)
+                    val previewDiagram = object : View(this) {
+                        private val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+                        override fun onDraw(canvas: android.graphics.Canvas) {
+                            super.onDraw(canvas)
+                            val inset = dp(8).toFloat()
+                            val w = (width - inset * 2).coerceAtLeast(0f)
+                            val h = (height - inset * 2).coerceAtLeast(0f)
+                            paint.style = android.graphics.Paint.Style.STROKE
+                            paint.strokeWidth = dp(2).toFloat()
+                            paint.color = Color.LTGRAY
+                            canvas.drawRect(inset, inset, inset + w, inset + h, paint)
+                            paint.color = Color.rgb(255, 193, 7)
+                            paint.strokeWidth = dp(3).toFloat()
+                            val f = proposal.frame
+                            // Crop proposals may extend beyond the current viewfinder.
+                            // Clip the diagram so it remains readable in the selection card.
+                            canvas.save()
+                            canvas.clipRect(inset, inset, inset + w, inset + h)
+                            canvas.drawRect(inset + f.l * w, inset + f.t * h,
+                                inset + f.r * w, inset + f.b * h, paint)
+                            canvas.restore()
+                        }
+                    }
+                    card.addView(previewDiagram, LinearLayout.LayoutParams(-1, dp(82)))
+                    card.setOnClickListener {
+                        if (streaming && !takingPhoto && countdown == null) {
+                            val revision = ++framingRevision
+                            guide.clear("Aligning selected composition")
+                            analyzer.execute {
+                                if (!closed && revision == framingRevision) {
+                                    engine.selectShot(index)
+                                    appliedFramingRevision = revision
+                                }
+                            }
+                        }
+                        dialog.dismiss()
+                    }
+                    list.addView(card)
+                    if (index < choices.lastIndex) list.addView(View(this).apply {
+                        setBackgroundColor(Color.DKGRAY)
+                    }, LinearLayout.LayoutParams(-1, dp(1)))
+                }
+                dialog.show()
+            }
+        }
         val why =
             button("Why this frame?") {
                 android.app.AlertDialog.Builder(this)
@@ -434,12 +531,12 @@ class AiCameraActivity : ComponentActivity() {
                     startActivity(Intent(this, PhotoReviewActivity::class.java).setData(it))
                 }
             }
-        moreActions = listOf(flashButton, gridButton, timerButton, levelButton, nextFrameButton, why, analyzePhoto)
+        moreActions = listOf(flashButton, gridButton, timerButton, levelButton, shotChoicesButton, nextFrameButton, why, analyzePhoto)
         modeControl=button("More"){chooseMode()}
         dock=FrameLayout(this)
         controls.addView(dock,LinearLayout.LayoutParams(-1,-2))
         modeStrip()
-        val actionRow = LinearLayout(this).apply { gravity=Gravity.CENTER_VERTICAL }
+        val actionRow = LinearLayout(this).apply { gravity=Gravity.CENTER_VERTICAL; setPadding(dp(8), dp(8), dp(8), dp(8)) }
         shutter = button("●") { when(shooting){"Pano"->addPanoramaFrame();"Time-lapse"->beginInterval();else->if(videoMode)toggleRecording() else requestCapture()} }.apply {
             contentDescription="Capture photo"; textSize=40f;setTextColor(Color.WHITE)
             background=getDrawable(R.drawable.camera_shutter)
@@ -448,7 +545,7 @@ class AiCameraActivity : ComponentActivity() {
         }
         review=icon("▧","Open last capture") { openPhoto() }
         actionRow.addView(review,LinearLayout.LayoutParams(0,dp(48),1f))
-        actionRow.addView(shutter,LinearLayout.LayoutParams(dp(64),dp(64)).apply {setMargins(dp(12),dp(4),dp(12),dp(4))})
+        actionRow.addView(shutter,LinearLayout.LayoutParams(dp(76),dp(76)).apply {setMargins(dp(18),dp(2),dp(18),dp(2))})
         actionRow.addView(switchButton,LinearLayout.LayoutParams(0,dp(48),1f))
         controls.addView(actionRow)
         status =
@@ -461,7 +558,7 @@ class AiCameraActivity : ComponentActivity() {
             }
         status.gravity=Gravity.CENTER
         status.setTextColor(Color.LTGRAY);status.textSize=12f
-        controls.addView(status, LinearLayout.LayoutParams(-1,dp(24)))
+        controls.addView(status, LinearLayout.LayoutParams(-1,dp(28)))
         if (portrait) root.addView(controls, LinearLayout.LayoutParams(-1, -2))
         else
             root.addView(
@@ -823,7 +920,7 @@ class AiCameraActivity : ComponentActivity() {
         if (!streaming || takingPhoto || countdown != null) return
         // Queue the reset on the same thread as the framing engine.
         val revision = ++framingRevision
-        guide.clear("Looking for another frame")
+        guide.clear("Scanning for another composition")
         analyzer.execute {
             if (!closed && revision == framingRevision) {
                 engine.nextShot()
@@ -1237,14 +1334,14 @@ class AiCameraActivity : ComponentActivity() {
         var target:View?=null
         labels.forEachIndexed {i,label->
             val b=icon(label,label){if(dock.isEnabled)action(i)}.apply {
-                textSize=12f;minWidth=dp(48);minimumWidth=dp(48);setPadding(dp(10),0,dp(10),0)
+                textSize=12f;minWidth=dp(62);minimumWidth=dp(62);setPadding(dp(14),0,dp(14),0)
                 isSelected=i==selected
-                if(isSelected)setTextColor(Color.rgb(110,222,157))
+                if(isSelected)setTextColor(Color.rgb(247,207,65))
             }
             if(b.isSelected){
                 setSelectedPill(b)
             }
-            row.addView(b,LinearLayout.LayoutParams(-2,dp(48)))
+            row.addView(b,LinearLayout.LayoutParams(-2,dp(48)).apply { setMargins(dp(3),0,dp(3),0) })
             if(i==selected)target=b
         }
         dock.removeAllViews();dock.addView(scroll,FrameLayout.LayoutParams(-1,dp(48)))
@@ -1343,22 +1440,68 @@ class AiCameraActivity : ComponentActivity() {
     }
 
     private fun chooseMode() {
-        val choices=mutableListOf("Photo","Portrait","Manual","Video","Cinematic","Time-lapse","Pano")
-        val info=runCatching { provider?.getCameraInfo(selector()) }.getOrNull()
-        if(info!=null && !Recorder.getHighSpeedVideoCapabilities(info)?.getSupportedQualities(DynamicRange.SDR).isNullOrEmpty()) choices.add("Slo-mo")
-        if(extensions?.isExtensionAvailable(selector(),ExtensionMode.NIGHT)==true) choices.add("Night")
-        dockPage="more"
-        val grid=android.widget.GridLayout(this).apply {columnCount=3;setBackgroundColor(Color.rgb(22,23,26))}
-        for(choice in choices+listOf("Close")) {
-            val b=icon(modeGlyph(choice)+"\n"+choice,choice){
-                if(choice=="Close")modeStrip() else switchMode(choice)
-            }.apply {textSize=13f}
-            grid.addView(b,android.widget.GridLayout.LayoutParams().apply {
-                width=0;height=dp(54);columnSpec=android.widget.GridLayout.spec(android.widget.GridLayout.UNDEFINED,1f)
+        val choices = mutableListOf("Photo", "Portrait", "Manual", "Video", "Cinematic", "Time-lapse", "Pano")
+        val info = runCatching { provider?.getCameraInfo(selector()) }.getOrNull()
+        if (info != null && !Recorder.getHighSpeedVideoCapabilities(info)
+                ?.getSupportedQualities(DynamicRange.SDR).isNullOrEmpty()) choices.add("Slo-mo")
+        if (extensions?.isExtensionAvailable(selector(), ExtensionMode.NIGHT) == true) choices.add("Night")
+        val surface = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(16))
+            background = roundedSurface(Color.rgb(21, 23, 29), 26)
+        }
+        surface.addView(TextView(this).apply {
+            text = "SHOOTING MODES"
+            textSize = 12f
+            letterSpacing = .12f
+            setTextColor(Color.rgb(247, 207, 65))
+        })
+        surface.addView(TextView(this).apply {
+            text = "Choose a mode"
+            textSize = 23f
+            setTextColor(Color.WHITE)
+            setPadding(0, dp(4), 0, dp(14))
+        })
+        val grid = android.widget.GridLayout(this).apply { columnCount = 2 }
+        lateinit var dialog: AlertDialog
+        choices.forEachIndexed { index, mode ->
+            val active = mode == shooting
+            val tile = button("${modeGlyph(mode)}   $mode") {
+                dialog.dismiss()
+                if (mode != shooting) switchMode(mode)
+            }.apply {
+                textSize = 15f
+                gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                setPadding(dp(16), 0, dp(12), 0)
+                setTextColor(if (active) Color.rgb(247, 207, 65) else Color.WHITE)
+                background = roundedSurface(
+                    if (active) Color.rgb(65, 56, 34) else Color.rgb(38, 42, 49), 16
+                )
+            }
+            grid.addView(tile, android.widget.GridLayout.LayoutParams().apply {
+                width = 0
+                height = dp(64)
+                columnSpec = android.widget.GridLayout.spec(index % 2, 1, 1f)
+                rowSpec = android.widget.GridLayout.spec(index / 2)
+                setMargins(dp(4), dp(4), dp(4), dp(4))
             })
         }
-        dock.removeAllViews();dock.addView(grid)
+        surface.addView(grid)
+        dialog = AlertDialog.Builder(this).setView(surface).setNegativeButton("Close", null).create()
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setGravity(Gravity.BOTTOM)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
+
+    private fun roundedSurface(color: Int, radius: Int) =
+        android.graphics.drawable.GradientDrawable().apply {
+            cornerRadius = dp(radius).toFloat()
+            setColor(color)
+        }
 
     private fun switchMode(choice:String){
             if(!modeControl.isEnabled)return
@@ -1452,35 +1595,155 @@ class AiCameraActivity : ComponentActivity() {
                 updateControls()
             }
         })
-        strip("tools",actions.map {it.text.toString()},-1){ i-> modeStrip();actions[i].performClick() }
-
+        // Spacious, scrollable camera controls replace the two-item paging strip.
+        // Group related controls, remove duplicates, and keep the live preview visible.
+        val quick = mutableListOf<Pair<String, () -> Unit>>()
+        if (timerButton.isEnabled) quick.add("Timer · ${timerLabel()}" to {
+            timerButton.performClick()
+            showTools()
+        })
+        if (ratioMenu.isEnabled) quick.add("Aspect ratio · ${displayRatio.label(portrait)}" to {
+            ratioMenu.performClick()
+        })
+        if (looksControl.isEnabled) quick.add("Filters & lighting" to { looksControl.performClick() })
+        if (exposure.isEnabled) quick.add("Exposure" to { exposure.performClick() })
+        val duplicates = setOf(flashButton, gridButton, timerButton, levelButton)
+        val capture = mutableListOf<Pair<String, () -> Unit>>()
+        if (flashButton.isEnabled) capture.add(flashButton.text.toString() to {
+            flashButton.performClick()
+            showTools()
+        })
+        if (gridButton.isEnabled) capture.add(gridButton.text.toString() to {
+            gridButton.performClick()
+            showTools()
+        })
+        if (levelButton.isEnabled) capture.add(levelButton.text.toString() to {
+            levelButton.performClick()
+            showTools()
+        })
+        val advanced: List<Pair<String, () -> Unit>> = actions.filter { it !in duplicates }.map { action ->
+            action.text.toString() to { action.performClick(); Unit }
+        }
+        val surface = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(18), dp(16), dp(18), dp(16))
+            background = roundedSurface(Color.rgb(20, 22, 27), 24)
+        }
+        surface.addView(TextView(this).apply {
+            text = "CAMERA SETTINGS"
+            textSize = 12f
+            letterSpacing = .13f
+            setTextColor(Color.rgb(247, 207, 65))
+        })
+        surface.addView(TextView(this).apply {
+            text = "Fine-tune your shot"
+            textSize = 23f
+            setTextColor(Color.WHITE)
+            setPadding(0, dp(3), 0, dp(10))
+        })
+        lateinit var dialog: AlertDialog
+        fun section(title: String, entries: List<Pair<String, () -> Unit>>) {
+            if (entries.isEmpty()) return
+            surface.addView(TextView(this).apply {
+                text = title
+                textSize = 13f
+                setTextColor(Color.LTGRAY)
+                setPadding(dp(4), dp(12), 0, dp(6))
+            })
+            val grid = android.widget.GridLayout(this).apply { columnCount = 2 }
+            entries.forEachIndexed { index, entry ->
+                val tile = button(entry.first) {
+                    dialog.dismiss()
+                    entry.second()
+                }.apply {
+                    textSize = 14f
+                    gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                    setPadding(dp(14), dp(8), dp(12), dp(8))
+                    maxLines = 2
+                    ellipsize = TextUtils.TruncateAt.END
+                    background = roundedSurface(Color.rgb(39, 43, 51), 15)
+                }
+                grid.addView(tile, android.widget.GridLayout.LayoutParams().apply {
+                    width = 0
+                    height = dp(62)
+                    columnSpec = android.widget.GridLayout.spec(index % 2, 1, 1f)
+                    rowSpec = android.widget.GridLayout.spec(index / 2)
+                    setMargins(dp(4), dp(4), dp(4), dp(4))
+                })
+            }
+            surface.addView(grid)
+        }
+        section("QUICK ADJUSTMENTS", quick)
+        section("CAPTURE", capture)
+        section("ADVANCED", advanced)
+        val scroll = ScrollView(this).apply {
+            isFillViewport = false
+            isVerticalScrollBarEnabled = false
+            addView(surface)
+        }
+        dialog = AlertDialog.Builder(this).setView(scroll).setNegativeButton("Done", null).create()
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setGravity(Gravity.BOTTOM)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            (resources.displayMetrics.heightPixels * .68f).toInt()
+        )
     }
 
     private fun closeTray() { tray?.let { viewfinder.removeView(it) };tray=null }
 
     private fun slider(title: String, low: Int, high: Int, start: Int, label: (Int)->String, set: (Int)->Unit) {
         closeTray()
-        val box=LinearLayout(this).apply {
-            orientation=LinearLayout.VERTICAL;setPadding(dp(12),dp(4),dp(12),dp(8))
-            setBackgroundColor(Color.argb(242,24,26,30));isClickable=true
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(18), dp(14), dp(18), dp(12))
+            background = roundedSurface(Color.argb(246, 24, 27, 34), 22)
+            isClickable = true
+            elevation = dp(8).toFloat()
         }
-        val row=LinearLayout(this).apply { gravity=Gravity.CENTER_VERTICAL }
-        val value=TextView(this).apply { setTextColor(Color.WHITE);text="$title  ${label(start)}" }
-        row.addView(value,LinearLayout.LayoutParams(0,-2,1f))
-        row.addView(button("Done") {closeTray()})
-        box.addView(row)
+        val heading = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
+        val info = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        info.addView(TextView(this).apply {
+            text = title.uppercase()
+            textSize = 11f
+            letterSpacing = .12f
+            setTextColor(Color.rgb(247, 207, 65))
+        })
+        val value = TextView(this).apply {
+            text = label(start)
+            textSize = 22f
+            setTextColor(Color.WHITE)
+            setPadding(0, dp(3), 0, 0)
+        }
+        info.addView(value)
+        heading.addView(info, LinearLayout.LayoutParams(0, -2, 1f))
+        heading.addView(button("Done") { closeTray() }.apply {
+            minHeight = dp(42)
+            background = roundedSurface(Color.rgb(48, 52, 61), 14)
+        })
+        box.addView(heading)
         box.addView(android.widget.SeekBar(this).apply {
-            contentDescription=title;max=high-low;progress=(start-low).coerceIn(0,max)
-            setOnSeekBarChangeListener(object:android.widget.SeekBar.OnSeekBarChangeListener {
-                override fun onStartTrackingTouch(bar:android.widget.SeekBar) {}
-                override fun onStopTrackingTouch(bar:android.widget.SeekBar) {}
-                override fun onProgressChanged(bar:android.widget.SeekBar,p:Int,user:Boolean) {
-                    if(user){value.text="$title  ${label(low+p)}";set(low+p)}
+            contentDescription = title
+            max = (high - low).coerceAtLeast(0)
+            progress = (start - low).coerceIn(0, max)
+            progressTintList = ColorStateList.valueOf(Color.rgb(247, 207, 65))
+            thumbTintList = ColorStateList.valueOf(Color.rgb(247, 207, 65))
+            setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+                override fun onStartTrackingTouch(bar: android.widget.SeekBar) {}
+                override fun onStopTrackingTouch(bar: android.widget.SeekBar) {}
+                override fun onProgressChanged(bar: android.widget.SeekBar, p: Int, user: Boolean) {
+                    if (user) {
+                        value.text = label(low + p)
+                        set(low + p)
+                    }
                 }
             })
-        },LinearLayout.LayoutParams(-1,dp(48)))
-        tray=box
-        viewfinder.addView(box,FrameLayout.LayoutParams(-1,-2,Gravity.TOP))
+        }, LinearLayout.LayoutParams(-1, dp(52)).apply { topMargin = dp(10) })
+        tray = box
+        viewfinder.addView(box, FrameLayout.LayoutParams(-1, -2, Gravity.TOP).apply {
+            setMargins(dp(12), dp(12), dp(12), 0)
+        })
     }
 
     private fun showExposure() {
@@ -1623,7 +1886,7 @@ class AiCameraActivity : ComponentActivity() {
         }
         // Bound the tray so it can scroll independently of guidance and camera controls.
         tray = scroller
-        viewfinder.addView(scroller, FrameLayout.LayoutParams(-1, -2, Gravity.TOP))
+        viewfinder.addView(scroller, FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM).apply { setMargins(dp(10),0,dp(10),dp(12)) })
     }
 
     private fun installGestures() {
