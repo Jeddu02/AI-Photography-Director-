@@ -32,8 +32,11 @@ class CameraLayoutTest {
                 return null
             }
             assertEquals("Auto Director",findGuide(root)?.settings?.mode)
-            buttons(root).single {it.contentDescription=="MORE"}.performClick()
-            assertTrue(buttons(root).any {it.contentDescription=="Manual"})
+            buttons(root).single {it.contentDescription=="More"}.performClick()
+            val modesDialog = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog()
+            assertNotNull(modesDialog)
+            assertTrue(buttons(modesDialog.window!!.decorView).any { it.text.toString().contains("Manual") })
+            modesDialog.dismiss()
         }finally {activity.pause().stop().destroy();prefs.edit().clear().commit()}
     }
 
@@ -52,10 +55,15 @@ class CameraLayoutTest {
                 assertTrue(label,b.width>=47*density && b.height>=47*density)
             }
             controls.single {it.contentDescription=="Camera tools"}.performClick()
-            assertTrue(buttons(root).any {it.contentDescription=="Return to camera modes"})
-            buttons(root).single {it.contentDescription=="Return to camera modes"}.performClick()
-            buttons(root).single {it.contentDescription=="MORE"}.performClick()
-            assertTrue(buttons(root).any {it.contentDescription=="Time-lapse"})
+            val toolsDialog = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog()
+            assertNotNull(toolsDialog)
+            assertTrue(buttons(toolsDialog.window!!.decorView).isNotEmpty())
+            toolsDialog.dismiss()
+            controls.single {it.contentDescription=="More"}.performClick()
+            val modesDialog = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog()
+            assertNotNull(modesDialog)
+            assertTrue(buttons(modesDialog.window!!.decorView).any { it.text.toString().contains("Time-lapse") })
+            modesDialog.dismiss()
             assertFalse(controls.any { it.text=="Timer off" })
             assertFalse(controls.single {it.text=="●"}.isEnabled)
         } finally {activity.pause().stop().destroy()}
