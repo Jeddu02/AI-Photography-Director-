@@ -226,6 +226,7 @@ class AiCameraActivity : ComponentActivity() {
     private lateinit var review: Button
     private lateinit var ratioHint: Button
     private lateinit var flashButton: Button
+    private lateinit var flashBadge: TextView
     private lateinit var switchButton: Button
     private lateinit var gridButton: Button
     private lateinit var timerButton: Button
@@ -323,9 +324,21 @@ class AiCameraActivity : ComponentActivity() {
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER_VERTICAL
         }, LinearLayout.LayoutParams(0, dp(44), 1f))
-        top(icon("ϟ", "Flash") {
+        val flashHost = FrameLayout(this)
+        val flashTop = icon("ϟ", "Flash off") {
             if (flashButton.isEnabled) flashButton.performClick() else status.text = "Flash unavailable"
-        })
+        }
+        flashHost.addView(flashTop, FrameLayout.LayoutParams(dp(48), dp(48)))
+        flashBadge = TextView(this).apply {
+            text = "OFF"
+            textSize = 9f
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+            background = roundedSurface(Color.argb(220, 30, 34, 42), 8)
+        }
+        flashHost.addView(flashBadge, FrameLayout.LayoutParams(dp(34), dp(16),
+            Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL))
+        header.addView(flashHost, LinearLayout.LayoutParams(dp(48), dp(48)))
         exposure = icon("±", "Exposure compensation") { showExposure() }
         top(exposure)
         looksControl = icon("◐", "Film and lighting") {
@@ -905,7 +918,20 @@ class AiCameraActivity : ComponentActivity() {
         lens = target
         flash = ImageCapture.FLASH_MODE_OFF
         flashButton.text = "Flash off"
+        updateFlashBadge()
         bindCamera()
+    }
+
+    private fun updateFlashBadge() {
+        if (!::flashBadge.isInitialized) return
+        val label = when (flash) {
+            ImageCapture.FLASH_MODE_ON -> "ON"
+            ImageCapture.FLASH_MODE_AUTO -> "AUTO"
+            else -> "OFF"
+        }
+        flashBadge.text = label
+        flashBadge.setTextColor(if (flash == ImageCapture.FLASH_MODE_OFF) Color.LTGRAY else Color.rgb(247, 207, 65))
+        flashBadge.contentDescription = "Flash $label"
     }
 
     private fun cycleFlash() {
@@ -924,6 +950,7 @@ class AiCameraActivity : ComponentActivity() {
                 ImageCapture.FLASH_MODE_ON -> "Flash on"
                 else -> "Flash off"
             }
+        updateFlashBadge()
     }
 
     private fun timerLabel() = if (timerSeconds == 0) "Timer off" else "Timer ${timerSeconds}s"
@@ -1644,7 +1671,7 @@ class AiCameraActivity : ComponentActivity() {
         val surface = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(18), dp(16), dp(18), dp(16))
-            background = roundedSurface(Color.rgb(20, 22, 27), 24)
+            background = roundedSurface(Color.argb(235, 27, 32, 42), 24)
         }
         surface.addView(TextView(this).apply {
             text = "CAMERA SETTINGS"
@@ -1678,7 +1705,7 @@ class AiCameraActivity : ComponentActivity() {
                     setPadding(dp(14), dp(8), dp(12), dp(8))
                     maxLines = 2
                     ellipsize = TextUtils.TruncateAt.END
-                    background = roundedSurface(Color.rgb(39, 43, 51), 15)
+                    background = roundedSurface(Color.argb(185, 52, 61, 75), 15)
                 }
                 grid.addView(tile, android.widget.GridLayout.LayoutParams().apply {
                     width = 0
@@ -2016,6 +2043,7 @@ class AiCameraActivity : ComponentActivity() {
         if(!videoMode && shooting !in listOf("Time-lapse","Pano") && countdown==null)shutter.contentDescription="Capture photo"
         switchButton.isEnabled = provider != null && adjustable
         flashButton.isEnabled = camera?.cameraInfo?.hasFlashUnit() == true && adjustable
+        updateFlashBadge()
         timerButton.isEnabled = adjustable
         levelButton.isEnabled = gravitySensor != null
         nextFrameButton.isEnabled = streaming && adjustable
