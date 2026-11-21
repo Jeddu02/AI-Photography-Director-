@@ -1668,27 +1668,55 @@ class AiCameraActivity : ComponentActivity() {
 
     private fun slider(title: String, low: Int, high: Int, start: Int, label: (Int)->String, set: (Int)->Unit) {
         closeTray()
-        val box=LinearLayout(this).apply {
-            orientation=LinearLayout.VERTICAL;setPadding(dp(12),dp(4),dp(12),dp(8))
-            setBackgroundColor(Color.argb(242,24,26,30));isClickable=true
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(18), dp(14), dp(18), dp(12))
+            background = roundedSurface(Color.argb(246, 24, 27, 34), 22)
+            isClickable = true
+            elevation = dp(8).toFloat()
         }
-        val row=LinearLayout(this).apply { gravity=Gravity.CENTER_VERTICAL }
-        val value=TextView(this).apply { setTextColor(Color.WHITE);text="$title  ${label(start)}" }
-        row.addView(value,LinearLayout.LayoutParams(0,-2,1f))
-        row.addView(button("Done") {closeTray()})
-        box.addView(row)
+        val heading = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
+        val info = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        info.addView(TextView(this).apply {
+            text = title.uppercase()
+            textSize = 11f
+            letterSpacing = .12f
+            setTextColor(Color.rgb(247, 207, 65))
+        })
+        val value = TextView(this).apply {
+            text = label(start)
+            textSize = 22f
+            setTextColor(Color.WHITE)
+            setPadding(0, dp(3), 0, 0)
+        }
+        info.addView(value)
+        heading.addView(info, LinearLayout.LayoutParams(0, -2, 1f))
+        heading.addView(button("Done") { closeTray() }.apply {
+            minHeight = dp(42)
+            background = roundedSurface(Color.rgb(48, 52, 61), 14)
+        })
+        box.addView(heading)
         box.addView(android.widget.SeekBar(this).apply {
-            contentDescription=title;max=high-low;progress=(start-low).coerceIn(0,max)
-            setOnSeekBarChangeListener(object:android.widget.SeekBar.OnSeekBarChangeListener {
-                override fun onStartTrackingTouch(bar:android.widget.SeekBar) {}
-                override fun onStopTrackingTouch(bar:android.widget.SeekBar) {}
-                override fun onProgressChanged(bar:android.widget.SeekBar,p:Int,user:Boolean) {
-                    if(user){value.text="$title  ${label(low+p)}";set(low+p)}
+            contentDescription = title
+            max = (high - low).coerceAtLeast(0)
+            progress = (start - low).coerceIn(0, max)
+            progressTintList = ColorStateList.valueOf(Color.rgb(247, 207, 65))
+            thumbTintList = ColorStateList.valueOf(Color.rgb(247, 207, 65))
+            setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+                override fun onStartTrackingTouch(bar: android.widget.SeekBar) {}
+                override fun onStopTrackingTouch(bar: android.widget.SeekBar) {}
+                override fun onProgressChanged(bar: android.widget.SeekBar, p: Int, user: Boolean) {
+                    if (user) {
+                        value.text = label(low + p)
+                        set(low + p)
+                    }
                 }
             })
-        },LinearLayout.LayoutParams(-1,dp(48)))
-        tray=box
-        viewfinder.addView(box,FrameLayout.LayoutParams(-1,-2,Gravity.TOP))
+        }, LinearLayout.LayoutParams(-1, dp(52)).apply { topMargin = dp(10) })
+        tray = box
+        viewfinder.addView(box, FrameLayout.LayoutParams(-1, -2, Gravity.TOP).apply {
+            setMargins(dp(12), dp(12), dp(12), 0)
+        })
     }
 
     private fun showExposure() {
