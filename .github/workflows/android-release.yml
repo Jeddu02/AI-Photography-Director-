@@ -21,9 +21,36 @@ jobs:
           flutter-version: '3.50.0'
           channel: stable
           cache: true
-      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK command-line tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="$RUNNER_TEMP/apd-android-sdk"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          mkdir -p "$SDK_ROOT/cmdline-tools/latest"
+          curl --fail --location --retry 3 \
+            "https://dl.google.com/android/repository/commandlinetools-linux-12266719_latest.zip" \
+            --output "$RUNNER_TEMP/android-commandline-tools.zip"
+          unzip -q "$RUNNER_TEMP/android-commandline-tools.zip" -d "$RUNNER_TEMP/android-cli"
+          cp -r "$RUNNER_TEMP/android-cli/cmdline-tools/." "$SDK_ROOT/cmdline-tools/latest/"
+          echo "$SDK_ROOT/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --version
+      - name: Accept Android SDK licenses
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +o pipefail
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses
+          result=${PIPESTATUS[1]}
+          set -o pipefail
+          test "$result" -eq 0
       - name: Install Android build dependencies
-        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'ndk;28.2.13676358'
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
+            'platforms;android-36' 'build-tools;36.0.0' 'ndk;28.2.13676358'
       - name: Configure local SDK paths
         run: |
           python3 - <<'PYCONFIG'
