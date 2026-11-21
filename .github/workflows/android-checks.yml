@@ -16,9 +16,14 @@ jobs:
           flutter-version: '3.50.0'
           channel: stable
           cache: true
-      - uses: android-actions/setup-android@v3
-        with:
-          accept-android-sdk-licenses: true
+      - name: Accept Android SDK licenses
+        shell: bash
+        run: |
+          # Ubuntu GitHub runners already include Android SDK command-line tools.
+          # The previous setup action stalled on an interactive license prompt.
+          set +o pipefail
+          yes | sdkmanager --licenses
+          set -o pipefail
       - name: Install required Android SDK packages
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'ndk;28.2.13676358'
       - run: flutter pub get
