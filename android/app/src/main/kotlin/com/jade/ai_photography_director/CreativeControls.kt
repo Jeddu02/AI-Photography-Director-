@@ -34,6 +34,8 @@ internal class CreativeControls(
     private val advanced: Boolean,
 ) : LinearLayout(activity) {
     private val gold = 0xfff7cf41.toInt()
+    private val glass = 0xc6242933.toInt()
+    private val glassSelected = 0xa66c572c.toInt()
     private val body = LinearLayout(activity).apply { orientation = VERTICAL }
     private val tabs = LinearLayout(activity)
     private val actions = LinearLayout(activity)
@@ -44,8 +46,8 @@ internal class CreativeControls(
 
     init {
         orientation = VERTICAL
-        setPadding(dp(6), dp(2), dp(6), dp(4))
-        background = surface(0xf217191e.toInt(), 12)
+        setPadding(dp(12), dp(12), dp(12), dp(12))
+        background = surface(0xd71b202a.toInt(), 24)
         isClickable = true
         addView(tabs)
         addView(body)
@@ -55,9 +57,12 @@ internal class CreativeControls(
 
     private fun dp(n: Int) = (n * resources.displayMetrics.density).roundToInt()
 
-    private fun surface(color: Int, radius: Int) = GradientDrawable().apply {
-        setColor(color)
+    private fun surface(color: Int, radius: Int) = GradientDrawable(
+        GradientDrawable.Orientation.TL_BR,
+        intArrayOf(color, 0xd0161a22.toInt())
+    ).apply {
         cornerRadius = dp(radius).toFloat()
+        setStroke(dp(1), 0x55ffffff)
     }
 
     private fun button(label: String, selected: Boolean = false, action: () -> Unit) = Button(activity).apply {
@@ -72,7 +77,7 @@ internal class CreativeControls(
         minHeight = dp(48)
         minimumWidth = dp(48)
         minWidth = dp(48)
-        background = surface(if (selected) 0xff3a3322.toInt() else 0xff25272c.toInt(), 9)
+        background = surface(if (selected) glassSelected else glass, 16)
         setOnClickListener {
             performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
             action()
@@ -98,29 +103,56 @@ internal class CreativeControls(
         tabs.removeAllViews()
         body.removeAllViews()
         actions.removeAllViews()
-        val names = listOf("Styles", "Portrait", "Adjust")
-        names.forEachIndexed { i, name ->
-            tabs.weighted(button(name, i == page) { page = i; render() }.apply {
+
+        val heading = LinearLayout(activity).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(4), 0, dp(2), dp(10))
+        }
+        val title = LinearLayout(activity).apply { orientation = VERTICAL }
+        title.addView(TextView(activity).apply {
+            text = "CREATIVE STUDIO"
+            textSize = 11f
+            letterSpacing = .16f
+            setTextColor(gold)
+        })
+        title.addView(TextView(activity).apply {
+            text = "Filters & effects"
+            textSize = 20f
+            setTextColor(Color.WHITE)
+        })
+        heading.addView(title, LayoutParams(0, -2, 1f))
+        heading.addView(button("✕", action = close).apply {
+            contentDescription = "Close filters and effects"
+        }, LayoutParams(dp(48), dp(48)))
+        tabs.addView(heading)
+
+        val navigation = LinearLayout(activity).apply {
+            setPadding(0, 0, 0, dp(8))
+        }
+        listOf("FILTERS", "PORTRAIT", "ADJUST").forEachIndexed { i, name ->
+            navigation.weighted(button(name, i == page) { page = i; render() }.apply {
                 isEnabled = i != 1 || stills
                 if (!isEnabled) contentDescription = "Portrait lighting available in photo modes"
             })
         }
-        tabs.addView(button("×", action = close).apply { contentDescription = "Close adjustments" }, dp(48), dp(48))
+        tabs.addView(navigation)
 
         when (page) {
             0 -> styles()
             1 -> portrait()
             else -> adjust()
         }
-        if (stills) actions.weighted(button("AI Suggest") { recommendation() })
-        if (page == 0) {
-            actions.weighted(button("Reset style") {
-                update { it.copy(film = Film.STANDARD, intensity = 100, saturation = 100, tone = 100, warmth = 0) }
-                render()
-            })
+
+        val footer = LinearLayout(activity).apply {
+            setPadding(0, dp(8), 0, 0)
         }
-        actions.weighted(button("Presets") { presets() })
-        actions.weighted(button("Reset all") { change(SavedLook(CameraLook(), 70), true); render() })
+        if (stills) footer.weighted(button("AI Suggest") { recommendation() })
+        footer.weighted(button("Presets") { presets() })
+        footer.weighted(button("Reset all") {
+            change(SavedLook(CameraLook(), 70), true)
+            render()
+        })
+        actions.addView(footer)
     }
 
     private fun styles() {
@@ -134,7 +166,7 @@ internal class CreativeControls(
                 orientation = VERTICAL
                 gravity = Gravity.CENTER
                 setPadding(dp(3), dp(3), dp(3), 0)
-                background = surface(if (selected) 0xff49402a.toInt() else 0xff25272c.toInt(), 9)
+                background = surface(if (selected) glassSelected else glass, 14)
                 contentDescription = if (selected) "${film.label}, selected" else film.label
                 isSelected = selected
                 setOnClickListener {
@@ -148,23 +180,23 @@ internal class CreativeControls(
                 scaleType = ImageView.ScaleType.CENTER_CROP
                 colorFilter = ColorMatrixColorFilter(CameraLook(film = film).matrix())
                 importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
-            }, dp(66), dp(28))
+            }, dp(86), dp(55))
             card.addView(TextView(activity).apply {
                 text = film.label
-                textSize = 10f
+                textSize = 11f
                 setTextColor(if (selected) gold else Color.WHITE)
                 gravity = Gravity.CENTER
                 importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
-            }, dp(72), dp(23))
-            strip.addView(card, LayoutParams(dp(78), dp(56)).apply { marginEnd = dp(4) })
+            }, dp(96), dp(30))
+            strip.addView(card, LayoutParams(dp(102), dp(98)).apply { marginEnd = dp(8) })
             if (selected) scroll.post { scroll.scrollTo((card.left - scroll.width / 3).coerceAtLeast(0), 0) }
         }
         val values = LinearLayout(activity)
-        val categories = listOf("Intensity", "Tone", "Color", "Warmth")
+        val categories = listOf("Strength", "Tone", "Color", "Warmth")
         categories.forEachIndexed { i, title ->
             values.weighted(button(title, i == styleControl) { styleControl = i; render() })
         }
-        values.weighted(button("Pad", action = tonePad))
+        // The tone pad remains available as a dedicated adjustment rather than crowding the filter row.
         body.addView(values)
         when (styleControl) {
             0 -> slider("Intensity", 0, 100, look.intensity, 100) { n, save -> update(save) { it.copy(intensity = n) } }
@@ -284,14 +316,20 @@ internal class CreativeControls(
                 }
             })
         }
-        row.addView(caption, LayoutParams(dp(98), -2))
-        row.addView(bar, LayoutParams(0, dp(48), 1f))
-        row.addView(button("Reset") {
+        val stack = LinearLayout(activity).apply {
+            orientation = VERTICAL
+            setPadding(dp(10), dp(6), dp(10), dp(4))
+        }
+        val header = LinearLayout(activity).apply { gravity = Gravity.CENTER_VERTICAL }
+        header.addView(caption, LayoutParams(0, dp(38), 1f))
+        header.addView(button("Reset") {
             set(default, true)
             bar.progress = default - min
             show(default)
-        }.apply { contentDescription = "Reset $label" })
-        body.addView(row)
+        }.apply { contentDescription = "Reset $label" }, LayoutParams(dp(80), dp(42)))
+        stack.addView(header)
+        stack.addView(bar, LayoutParams(-1, dp(48)))
+        body.addView(stack)
     }
 
     private fun presets() {
