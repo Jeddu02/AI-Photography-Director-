@@ -32,7 +32,7 @@ class CameraLayoutTest {
                 return null
             }
             assertEquals("Auto Director",findGuide(root)?.settings?.mode)
-            buttons(root).single {it.contentDescription=="More"}.performClick()
+            buttons(root).single {it.contentDescription=="MORE"}.performClick()
             val modesDialog = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog()
             assertNotNull(modesDialog)
             assertTrue(buttons(modesDialog.window!!.decorView).any { it.text.toString().contains("Manual") })
@@ -52,20 +52,20 @@ class CameraLayoutTest {
             val controls=buttons(root)
             for(label in listOf("Back","Exposure compensation","Camera tools","AI CAM","Film and lighting","Open last capture","Capture photo","Switch camera")){
                 val b=controls.single {it.contentDescription?.toString()==label}
-                assertTrue(label,b.width>=47*density && b.height>=47*density)
+                assertTrue("$label: ${b.width}x${b.height}px, density=$density", b.width>=47*density && b.height>=47*density)
             }
             controls.single {it.contentDescription=="Camera tools"}.performClick()
             val toolsDialog = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog()
             assertNotNull(toolsDialog)
             assertTrue(buttons(toolsDialog.window!!.decorView).isNotEmpty())
             toolsDialog.dismiss()
-            controls.single {it.contentDescription=="More"}.performClick()
+            controls.single {it.contentDescription=="MORE"}.performClick()
             val modesDialog = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog()
             assertNotNull(modesDialog)
             assertTrue(buttons(modesDialog.window!!.decorView).any { it.text.toString().contains("Time-lapse") })
             modesDialog.dismiss()
             assertFalse(controls.any { it.text=="Timer off" })
-            assertFalse(controls.single {it.text=="●"}.isEnabled)
+            assertFalse(controls.single {it.contentDescription=="Capture photo"}.isEnabled)
         } finally {activity.pause().stop().destroy()}
     }
 }
