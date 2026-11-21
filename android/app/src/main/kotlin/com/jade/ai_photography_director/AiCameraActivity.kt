@@ -219,6 +219,7 @@ class AiCameraActivity : ComponentActivity() {
     private lateinit var aspectHost: FrameLayout
     private lateinit var viewfinder: FrameLayout
     private lateinit var preview: PreviewView
+    private lateinit var zoomIndicator: TextView
     private lateinit var guide: GuideView
     private lateinit var status: TextView
     private lateinit var shutter: Button
@@ -361,6 +362,17 @@ class AiCameraActivity : ComponentActivity() {
         }
         viewfinder.addView(portraitLayer,FrameLayout.LayoutParams(-1,-1))
         viewfinder.addView(guide, FrameLayout.LayoutParams(-1, -1))
+        zoomIndicator = TextView(this).apply {
+            text = "1.0×"
+            textSize = 15f
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+            background = roundedSurface(Color.argb(225, 22, 24, 28), 18)
+            contentDescription = "Current camera zoom 1.0 times"
+            visibility = View.GONE
+        }
+        viewfinder.addView(zoomIndicator, FrameLayout.LayoutParams(dp(78), dp(38),
+            Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = dp(12) })
         zoomControls = LinearLayout(this).apply {
             gravity = Gravity.CENTER
             visibility = View.GONE
@@ -1374,6 +1386,7 @@ class AiCameraActivity : ComponentActivity() {
     private fun updateZoom(enabled:Boolean){
         val owner=camera
         zoomControls.visibility = if (owner != null && enabled && streaming) View.VISIBLE else View.GONE
+        zoomIndicator.visibility = if (owner != null && enabled && streaming) View.VISIBLE else View.GONE
         autoFrame.visibility = if (stillLighting && shooting != "Manual") View.VISIBLE else View.GONE
         autoFrame.isEnabled = enabled && !autoFrameInFlight && countdown == null
         autoFrame.text = if (autoFrameInFlight) "Framing…" else "Auto frame"
@@ -1383,6 +1396,10 @@ class AiCameraActivity : ComponentActivity() {
         zoomRow.removeAllViews()
         owner?.cameraInfo?.zoomState?.observe(this){state->
             if(owner!==camera)return@observe
+            val displayedZoom = kotlin.math.round(state.zoomRatio * 10f) / 10f
+            zoomIndicator.text = String.format(java.util.Locale.US, "%.1f×", displayedZoom)
+            zoomIndicator.contentDescription = "Current camera zoom " +
+                String.format(java.util.Locale.US, "%.1f times", displayedZoom)
             val values=listOf(.5f,1f,2f).filter {it in state.minZoomRatio..state.maxZoomRatio}
             if(zoomRow.childCount!=values.size){
                 zoomRow.removeAllViews()
@@ -1676,18 +1693,29 @@ class AiCameraActivity : ComponentActivity() {
         section("QUICK ADJUSTMENTS", quick)
         section("CAPTURE", capture)
         section("ADVANCED", advanced)
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            background = roundedSurface(Color.rgb(20, 22, 27), 24)
+        }
         val scroll = ScrollView(this).apply {
             isFillViewport = false
-            isVerticalScrollBarEnabled = false
+            isVerticalScrollBarEnabled = true
             addView(surface)
         }
-        dialog = AlertDialog.Builder(this).setView(scroll).setNegativeButton("Done", null).create()
+        container.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
+        val done = button("DONE") { dialog.dismiss() }.apply {
+            gravity = Gravity.CENTER
+            setTextColor(Color.rgb(247, 207, 65))
+            contentDescription = "Close camera settings"
+        }
+        container.addView(done, LinearLayout.LayoutParams(-1, dp(52)))
+        dialog = AlertDialog.Builder(this).setView(container).create()
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.window?.setGravity(Gravity.BOTTOM)
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            (resources.displayMetrics.heightPixels * .68f).toInt()
+            (resources.displayMetrics.heightPixels * .62f).toInt()
         )
     }
 
@@ -1875,7 +1903,7 @@ class AiCameraActivity : ComponentActivity() {
             stills = stillLighting,
             advanced = stillLighting && creativeSupported,
         )
-        val maxHeight = (viewfinder.height - dp(96)).coerceAtLeast(dp(48))
+        val maxHeight = (viewfinder.height * .48f).toInt().coerceAtLeast(dp(160))
         val scroller = object : ScrollView(this) {
             override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
                 super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(maxHeight, View.MeasureSpec.AT_MOST))
